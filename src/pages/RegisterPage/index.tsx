@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import Button from '../../components/Button';
+import Input from '../../components/Input';
 import * as S from './styles';
 
 interface RegisterCredentials {
@@ -86,37 +87,36 @@ const RegisterPage: React.FC = () => {
   return (
     <S.RegisterContainer>
       <S.RegisterCard>
-        <S.Title>Criar Conta</S.Title>
         <S.Form onSubmit={handleSubmit}>
           <S.InputGroup>
-            <S.Label htmlFor="name">👤 Nome</S.Label>
-            <S.Input
+            <S.Label htmlFor="name">Nome</S.Label>
+            <Input
               type="text"
               id="name"
               name="name"
               value={credentials.name}
               onChange={handleInputChange}
-              placeholder="Digite seu nome completo"
+              placeholder="Digite seu nome"
               required
             />
           </S.InputGroup>
           
           <S.InputGroup>
-            <S.Label htmlFor="email">📧 Email</S.Label>
-            <S.Input
+            <S.Label htmlFor="email">Email</S.Label>
+            <Input
               type="email"
               id="email"
               name="email"
               value={credentials.email}
               onChange={handleInputChange}
-              placeholder="Digite seu email"
+              placeholder="Digite seu e-mail"
               required
             />
           </S.InputGroup>
           
           <S.InputGroup>
-            <S.Label htmlFor="password">🔒 Senha</S.Label>
-            <S.Input
+            <S.Label htmlFor="password">Senha</S.Label>
+            <Input
               type="password"
               id="password"
               name="password"
@@ -128,28 +128,29 @@ const RegisterPage: React.FC = () => {
           </S.InputGroup>
           
           <S.InputGroup>
-            <S.Label htmlFor="confirmPassword">🔒 Confirmar Senha</S.Label>
-            <S.Input
+            <S.Label htmlFor="confirmPassword">Confirmar Senha</S.Label>
+            <Input
               type="password"
               id="confirmPassword"
               name="confirmPassword"
               value={credentials.confirmPassword}
               onChange={handleInputChange}
-              placeholder="Confirme sua senha"
+              placeholder="Confirme sua senha novamente"
               required
             />
           </S.InputGroup>
           
-          <Button type="submit" disabled={isLoading}>
-            ✨ {isLoading ? 'Criando conta...' : 'Criar Conta'}
-          </Button>
-          
           {error && <S.ErrorMessage>{error}</S.ErrorMessage>}
         </S.Form>
         
-        <S.LoginLink>
-          Já tem uma conta? <Link to="/login">Faça login</Link>
-        </S.LoginLink>
+        <S.BottomRow>
+          <S.LoginLink>
+            Já tem uma conta? <Link to="/login">Faça login</Link>
+          </S.LoginLink>
+          <Button variant="login" type="submit" disabled={isLoading}>
+            {isLoading ? 'Cadastrando...' : 'Cadastrar'}
+          </Button>
+        </S.BottomRow>
       </S.RegisterCard>
     </S.RegisterContainer>
   );

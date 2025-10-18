@@ -37,6 +37,24 @@
   --button-logout-hover: #764ba2;
   --button-shadow: rgba(142, 78, 198, 0.4);
   
+  --button-primary-bg: #8E4EC6;
+  --button-primary-hover: #9A5CD0;
+  --button-primary-active: #8457AA;
+  --button-primary-disabled: #6F6D78;
+  
+  --button-secondary-bg: #B744F714;
+  --button-secondary-hover: #C150FF2E;
+  --button-secondary-active: #B412F90A;
+  --button-secondary-disabled: #EBEAF814;
+  
+  --input-border: #3C393F;
+  --input-bg: #1A191B;
+  --input-text: #EEEEF0;
+  --input-placeholder: #6F6D78;
+  --input-focus-border: #8E4EC6;
+  --input-focus-bg: #1A191B;
+  --input-cursor: #8E4EC6;
+  
   --color-white: #FFFFFF;
   --text-footer: #B5B2BC;
   --background-footer: #12111380;
@@ -73,6 +91,24 @@
   --button-logout-hover: #764ba2;
   --button-shadow: rgba(142, 78, 198, 0.4);
   
+  --button-primary-bg: #8E4EC6;
+  --button-primary-hover: #9A5CD0;
+  --button-primary-active: #8457AA;
+  --button-primary-disabled: #6F6D78;
+  
+  --button-secondary-bg: #8E4EC614;
+  --button-secondary-hover: #8E4EC62E;
+  --button-secondary-active: #8E4EC60A;
+  --button-secondary-disabled: #EBEAF814;
+  
+  --input-border: #8E4EC6;
+  --input-bg: #ffffff;
+  --input-text: #6F6D78;
+  --input-placeholder: #6F6D78;
+  --input-focus-border: #8E4EC6;
+  --input-focus-bg: #ffffff;
+  --input-cursor: #8E4EC6;
+  
   --color-white: #FFFFFF;
   --text-footer: #B5B2BC;
   --background-footer: #12111380;
@@ -95,6 +131,9 @@ body {
   transition: background-color 0.6s ease, color 0.6s ease;
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
 }
 
 body:not(.has-layout) {

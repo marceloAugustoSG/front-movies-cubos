@@ -15,7 +15,16 @@ export const HeaderContainer = styled.header`
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--header-border);
   
-  @media (max-width: 414px) {
+  @media (max-width: 356px) {
+    height: auto;
+    min-height: 120px;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 20px;
+  }
+  
+  @media (min-width: 357px) and (max-width: 414px) {
     height: 60px;
     padding: 0 20px;
   }
@@ -96,7 +105,13 @@ export const HeaderActions = styled.div`
   align-items: center;
   gap: 8px;
   
-  @media (max-width: 414px) {
+  @media (max-width: 356px) {
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+  
+  @media (min-width: 357px) and (max-width: 414px) {
     gap: 6px;
   }
   

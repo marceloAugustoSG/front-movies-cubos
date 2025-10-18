@@ -1,5 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, createContext, useContext } from 'react';
 import * as S from './styles';
+
+interface ModalContextType {
+  onCloseWithAnimation: () => void;
+}
+
+const ModalContext = createContext<ModalContextType | null>(null);
+
+export const useModalContext = () => {
+  const context = useContext(ModalContext);
+  if (!context) {
+    throw new Error('useModalContext must be used within a Modal');
+  }
+  return context;
+};
 
 interface ModalProps {
   isOpen: boolean;
@@ -28,24 +42,26 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title }) => {
     setIsClosing(true);
     setTimeout(() => {
       onClose();
+      setIsClosing(false);
     }, 300);
-  };
-
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      handleClose();
-    }
   };
 
   if (!isOpen && !isClosing) return null;
 
   return (
-    <S.ModalBackdrop onClick={handleBackdropClick} isClosing={isClosing}>
-      <S.ModalContainer isClosing={isClosing}>
-        {title && <S.ModalTitle>{title}</S.ModalTitle>}
-        {children}
-      </S.ModalContainer>
-    </S.ModalBackdrop>
+    <ModalContext.Provider value={{ onCloseWithAnimation: handleClose }}>
+      <S.ModalBackdrop isClosing={isClosing}>
+        <S.ModalContainer isClosing={isClosing}>
+          {title && (
+            <S.ModalHeader>
+              <S.ModalTitle>{title}</S.ModalTitle>
+              <S.CloseButton onClick={handleClose}>×</S.CloseButton>
+            </S.ModalHeader>
+          )}
+          {children}
+        </S.ModalContainer>
+      </S.ModalBackdrop>
+    </ModalContext.Provider>
   );
 };
 

@@ -6,23 +6,17 @@ export const MoviesContainer = styled.div`
   padding: 0;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  overflow-x: hidden;
   
-  @media (max-width: 414px) {
+  @media (max-width: 356px) {
+    min-height: calc(100vh - 140px);
+    width: 100vw;
+    max-width: 100vw;
+  }
+  
+  @media (min-width: 357px) and (max-width: 414px) {
     min-height: calc(100vh - 128px);
-  }
-  
-  /* Tablet */
-  @media (min-width: 415px) and (max-width: 768px) {
-    min-height: calc(100vh - 140px);
-  }
-  
-  /* Desktop Small */
-  @media (min-width: 769px) and (max-width: 1365px) {
-    min-height: calc(100vh - 140px);
-  }
-  
-  @media (min-width: 1366px) {
-    min-height: calc(100vh - 140px);
   }
 `;
 
@@ -36,7 +30,7 @@ export const ControlBar = styled.div`
   justify-content: flex-end;
   gap: 10px;
   
-  @media (max-width: 768px) {
+  @media (max-width: 356px) {
     height: auto;
     flex-direction: column;
     align-items: stretch;
@@ -44,13 +38,20 @@ export const ControlBar = styled.div`
     padding: 15px 10px;
   }
   
-  @media (min-width: 769px) {
-    height: 92px;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 10px;
-    padding: 24px 22px;
+  @media (min-width: 357px) and (max-width: 414px) {
+    height: auto;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+    padding: 15px 10px;
+  }
+  
+  @media (min-width: 415px) and (max-width: 768px) {
+    height: auto;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+    padding: 15px 10px;
   }
 `;
 
@@ -60,19 +61,10 @@ export const SearchAndButtons = styled.div`
   gap: 15px;
   width: 100%;
   
-  @media (max-width: 768px) {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    width: 100%;
-  }
-  
   @media (min-width: 769px) {
-    display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: flex-end;
-    gap: 10px;
     width: auto;
   }
 `;
@@ -82,8 +74,14 @@ export const ButtonsRow = styled.div`
   gap: 10px;
   width: 100%;
   
-  @media (max-width: 768px) {
-    width: 100%;
+  @media (max-width: 356px) {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  @media (min-width: 357px) and (max-width: 768px) {
+    flex-direction: row;
+    gap: 10px;
   }
   
   @media (min-width: 769px) {
@@ -97,77 +95,101 @@ export const MoviesContent = styled.div`
   background-color: var(--movies-content-bg);
   border-radius: 8px;
   padding: 20px;
-  flex: 1;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   
-  @media (max-width: 604px) {
-    margin: 0 10px;
-    width: calc(100% - 20px);
+  @media (max-width: 356px) {
+    margin: 0;
+    width: 100%;
+    max-width: 100vw;
     padding: 10px;
+    border-radius: 0;
+    box-sizing: border-box;
   }
   
-  @media (min-width: 605px) {
-    margin: 0 22px;
-    width: calc(100% - 44px);
+  @media (min-width: 357px) and (max-width: 414px) {
+    margin: 0;
+    width: 100%;
+    max-width: 100%;
+    padding: 10px;
+    border-radius: 0;
+    box-sizing: border-box;
+  }
+  
+  @media (min-width: 415px) and (max-width: 768px) {
+    margin: 0;
+    width: 100%;
+    max-width: 100%;
     padding: 20px;
+    border-radius: 8px;
+    box-sizing: border-box;
+  }
+  
+  @media (min-width: 769px) {
+    margin: 0 24px;
+    width: calc(100% - 48px);
+    max-width: calc(100vw - 48px);
+    padding: 20px;
+    border-radius: 8px;
+    box-sizing: border-box;
   }
   
   @media (min-width: 1366px) {
-    height: 782px;
-    margin: 0 22px;
-    width: calc(100% - 44px);
-    padding: 20px;
+    min-height: 782px;
   }
-`;
-
-export const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
-  flex-wrap: wrap;
-  gap: 20px;
-`;
-
-export const Title = styled.h1`
-  color: var(--text-primary);
-  font-size: 32px;
-  font-weight: 700;
-`;
-
-export const HeaderActions = styled.div`
-  display: flex;
-  gap: 15px;
-  align-items: center;
 `;
 
 export const MoviesGrid = styled.div`
   display: grid;
-  gap: 24px;
+  gap: 16px;
   margin-bottom: 30px;
   justify-content: center;
   align-content: start;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   
-  @media (max-width: 383px) {
-    gap: 24px;
+  @media (max-width: 356px) {
+    gap: 16px;
     margin-bottom: 20px;
-    grid-template-columns: repeat(auto-fit, 150px);
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  @media (min-width: 357px) and (max-width: 383px) {
+    gap: 16px;
+    margin-bottom: 20px;
+    grid-template-columns: repeat(auto-fill, 150px);
     grid-auto-rows: 225px;
   }
   
-  @media (min-width: 384px) and (max-width: 1365px) {
+  @media (min-width: 384px) and (max-width: 414px) {
+    gap: 16px;
+    margin-bottom: 20px;
+    grid-template-columns: repeat(2, 183px);
+    grid-auto-rows: 281px;
+  }
+  
+  @media (min-width: 415px) and (max-width: 768px) {
     gap: 24px;
     margin-bottom: 20px;
-    grid-template-columns: repeat(auto-fit, 183px);
+    grid-template-columns: repeat(auto-fill, 183px);
+    grid-auto-rows: 275px;
+  }
+  
+  @media (min-width: 769px) {
+    gap: 24px;
+    margin-bottom: 20px;
+    grid-template-columns: repeat(auto-fill, 183px);
     grid-auto-rows: 275px;
   }
   
   @media (min-width: 1366px) {
-    height: 700px;
-    overflow: hidden;
-    gap: 24px;
-    margin-bottom: 30px;
-    grid-template-columns: repeat(auto-fit, 183px);
-    grid-auto-rows: 275px;
+    grid-template-columns: repeat(auto-fill, 235px);
+    grid-auto-rows: 355px;
   }
 `;
 
@@ -188,19 +210,30 @@ export const MovieCard = styled.div`
   margin: 0;
   padding: 0;
   
-  @media (max-width: 383px) {
+  @media (max-width: 356px) {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 2/3;
+  }
+  
+  @media (min-width: 357px) and (max-width: 383px) {
     width: 150px;
     height: 225px;
   }
   
-  @media (min-width: 384px) and (max-width: 1365px) {
+  @media (min-width: 384px) and (max-width: 414px) {
+    width: 183px;
+    height: 281px;
+  }
+  
+  @media (min-width: 415px) and (max-width: 1365px) {
     width: 183px;
     height: 275px;
   }
   
   @media (min-width: 1366px) {
-    width: 183px;
-    height: 275px;
+    width: 235px;
+    height: 355px;
   }
   
   &:hover {
@@ -215,9 +248,7 @@ export const MovieOverlay = styled.div`
   left: 0;
   right: 0;
   background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
-  padding: 20px;
-  display: flex;
-  align-items: flex-end;
+  padding: 20px 16px 16px;
 `;
 
 export const MovieTitle = styled.h3`
@@ -228,69 +259,77 @@ export const MovieTitle = styled.h3`
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 `;
 
-export const LoadingContainer = styled.div`
+export const PaginationContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 200px;
-  color: var(--text-secondary);
-  font-size: 18px;
-`;
-
-export const ErrorMessage = styled.div`
-  background: #fee;
-  color: #c33;
-  padding: 15px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  border: 1px solid #fcc;
+  gap: 8px;
+  width: 100%;
+  height: 92px;
+  
+  @media (max-width: 480px) {
+    height: 60px;
+    gap: 8px;
+  }
+  
+  @media (min-width: 481px) and (max-width: 768px) {
+    height: 70px;
+    gap: 8px;
+  }
+  
+  @media (min-width: 769px) and (max-width: 1365px) {
+    height: 80px;
+    gap: 8px;
+  }
+  
+  @media (min-width: 1366px) {
+    height: 92px;
+    gap: 8px;
+  }
 `;
 
 export const EmptyState = styled.div`
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   padding: 60px 20px;
+  text-align: center;
   color: var(--text-secondary);
 `;
 
-export const EmptyTitle = styled.h3`
+export const EmptyTitle = styled.h2`
   font-size: 24px;
-  margin-bottom: 10px;
+  margin-bottom: 16px;
   color: var(--text-primary);
 `;
 
 export const EmptyDescription = styled.p`
   font-size: 16px;
-  margin-bottom: 20px;
+  margin-bottom: 32px;
+  max-width: 400px;
+  line-height: 1.5;
 `;
 
-export const PaginationContainer = styled.div`
+export const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+`;
+
+export const ErrorMessage = styled.div`
+  background-color: #ff6b6b;
+  color: white;
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  text-align: center;
+`;
+
+export const LoadingContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 30px;
-  gap: 8px;
-  height: 92px;
-  width: 100%;
-  
-  @media (max-width: 414px) {
-    height: 92px;
-    margin-top: 30px;
-  }
-  
-  /* Tablet */
-  @media (min-width: 415px) and (max-width: 768px) {
-    height: 92px;
-    margin-top: 30px;
-  }
-  
-  /* Desktop Small */
-  @media (min-width: 769px) and (max-width: 1365px) {
-    height: 92px;
-    margin-top: 30px;
-  }
-  
-  @media (min-width: 1366px) {
-    height: 92px;
-    margin-top: 20px;
-  }
+  padding: 40px;
 `;

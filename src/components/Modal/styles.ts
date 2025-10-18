@@ -37,9 +37,9 @@ export const ModalBackdrop = styled.div<{ isClosing?: boolean }>`
 
 export const ModalContainer = styled.div<{ isClosing?: boolean }>`
   background-color: #232225;
-  border-radius: 8px;
+  border-radius: 4px;
   width: 570px;
-  height: 455px;
+  min-height: 455px;
   padding: 20px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   position: relative;
@@ -76,6 +76,13 @@ export const ModalContainer = styled.div<{ isClosing?: boolean }>`
   }
 `;
 
+export const ModalHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+`;
+
 export const ModalTitle = styled.h2`
   font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-weight: 400;
@@ -85,20 +92,49 @@ export const ModalTitle = styled.h2`
   letter-spacing: 0px;
   text-align: left;
   color: #B5B2BC;
-  margin: 0 0 16px 0;
+  margin: 0;
+`;
+
+export const CloseButton = styled.button`
+  background: none;
+  border: none;
+  color: #B5B2BC;
+  font-size: 28px;
+  font-weight: 300;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: rgba(181, 178, 188, 0.1);
+    color: #ffffff;
+  }
+
+  &:active {
+    background-color: rgba(181, 178, 188, 0.2);
+  }
 `;
 
 export const ModalContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
+  flex: 1;
+  overflow-y: auto;
 `;
 
 export const ModalActions = styled.div`
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-  margin-top: 32px;
+  margin-top: auto;
   padding-top: 20px;
   border-top: 1px solid var(--border-primary);
+  flex-shrink: 0;
 `;

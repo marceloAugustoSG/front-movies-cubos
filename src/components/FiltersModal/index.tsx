@@ -1,19 +1,16 @@
 import React, { useState } from 'react';
-import Modal from '../../components/Modal';
+import Modal, { useModalContext } from '../../components/Modal';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import * as S from './styles';
 
 interface MovieFilters {
-  duration?: {
-    min?: number;
-    max?: number;
-  };
-  releaseDate?: {
-    start?: string;
-    end?: string;
-  };
-  genre?: string;
+  title?: string;
+  releaseYear?: number;
+  minDuration?: number;
+  maxDuration?: number;
+  minBudget?: number;
+  maxBudget?: number;
 }
 
 interface FiltersModalProps {
@@ -22,114 +19,123 @@ interface FiltersModalProps {
   onApplyFilters: (filters: MovieFilters) => void;
 }
 
-const FiltersModal: React.FC<FiltersModalProps> = ({ isOpen, onClose, onApplyFilters }) => {
+const FiltersModalContent: React.FC<Omit<FiltersModalProps, 'isOpen'>> = ({ onClose, onApplyFilters }) => {
   const [filters, setFilters] = useState<MovieFilters>({});
+  const { onCloseWithAnimation } = useModalContext();
 
   const handleApply = () => {
     onApplyFilters(filters);
     onClose();
   };
 
+  const handleCancel = () => {
+    onCloseWithAnimation();
+  };
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Filtros">
+    <>
       <S.ModalContent>
-        {/* Filtro de Duração */}
+        <S.FilterSection>
+          <S.FilterLabel>Título do Filme</S.FilterLabel>
+          <Input
+            type="text"
+            placeholder="Digite o título do filme"
+            value={filters.title || ''}
+            onChange={(e) => setFilters(prev => ({
+              ...prev,
+              title: e.target.value || undefined
+            }))}
+          />
+        </S.FilterSection>
+
+        <S.FilterSection>
+          <S.FilterLabel>Ano de Lançamento</S.FilterLabel>
+          <Input
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            placeholder="Ex: 2023"
+            min="1900"
+            max="2030"
+            value={filters.releaseYear !== undefined ? String(filters.releaseYear) : ''}
+            onChange={(e) => setFilters(prev => ({
+              ...prev,
+              releaseYear: e.target.value ? parseInt(e.target.value) : undefined
+            }))}
+          />
+        </S.FilterSection>
+
         <S.FilterSection>
           <S.FilterLabel>Duração (minutos)</S.FilterLabel>
           <S.DurationInputs>
             <Input
               type="number"
               placeholder="Mínimo"
-              value={filters.duration?.min || ''}
+              min="1"
+              value={filters.minDuration !== undefined ? String(filters.minDuration) : ''}
               onChange={(e) => setFilters(prev => ({
                 ...prev,
-                duration: {
-                  ...prev.duration,
-                  min: e.target.value ? parseInt(e.target.value) : undefined
-                }
+                minDuration: e.target.value ? parseInt(e.target.value) : undefined
               }))}
             />
             <S.DurationSeparator>até</S.DurationSeparator>
             <Input
               type="number"
               placeholder="Máximo"
-              value={filters.duration?.max || ''}
+              min="1"
+              value={filters.maxDuration !== undefined ? String(filters.maxDuration) : ''}
               onChange={(e) => setFilters(prev => ({
                 ...prev,
-                duration: {
-                  ...prev.duration,
-                  max: e.target.value ? parseInt(e.target.value) : undefined
-                }
+                maxDuration: e.target.value ? parseInt(e.target.value) : undefined
               }))}
             />
           </S.DurationInputs>
         </S.FilterSection>
 
-        {/* Filtro de Data de Lançamento */}
         <S.FilterSection>
-          <S.FilterLabel>Data de Lançamento</S.FilterLabel>
-          <S.DateInputs>
+          <S.FilterLabel>Orçamento (USD)</S.FilterLabel>
+          <S.DurationInputs>
             <Input
-              type="date"
-              placeholder="Data inicial"
-              value={filters.releaseDate?.start || ''}
+              type="number"
+              placeholder="Mínimo"
+              min="0"
+              value={filters.minBudget !== undefined ? String(filters.minBudget) : ''}
               onChange={(e) => setFilters(prev => ({
                 ...prev,
-                releaseDate: {
-                  ...prev.releaseDate,
-                  start: e.target.value
-                }
+                minBudget: e.target.value ? parseInt(e.target.value) : undefined
               }))}
             />
-            <S.DateSeparator>até</S.DateSeparator>
+            <S.DurationSeparator>até</S.DurationSeparator>
             <Input
-              type="date"
-              placeholder="Data final"
-              value={filters.releaseDate?.end || ''}
+              type="number"
+              placeholder="Máximo"
+              min="0"
+              value={filters.maxBudget !== undefined ? String(filters.maxBudget) : ''}
               onChange={(e) => setFilters(prev => ({
                 ...prev,
-                releaseDate: {
-                  ...prev.releaseDate,
-                  end: e.target.value
-                }
+                maxBudget: e.target.value ? parseInt(e.target.value) : undefined
               }))}
             />
-          </S.DateInputs>
-        </S.FilterSection>
-
-        {/* Filtro de Gênero */}
-        <S.FilterSection>
-          <S.FilterLabel>Gênero</S.FilterLabel>
-          <S.GenreSelect
-            value={filters.genre || ''}
-            onChange={(e) => setFilters(prev => ({
-              ...prev,
-              genre: e.target.value || undefined
-            }))}
-          >
-            <option value="">Selecione um gênero</option>
-            <option value="Ação">Ação</option>
-            <option value="Aventura">Aventura</option>
-            <option value="Comédia">Comédia</option>
-            <option value="Drama">Drama</option>
-            <option value="Ficção Científica">Ficção Científica</option>
-            <option value="Terror">Terror</option>
-            <option value="Romance">Romance</option>
-            <option value="Animação">Animação</option>
-            <option value="Documentário">Documentário</option>
-            <option value="Thriller">Thriller</option>
-          </S.GenreSelect>
+          </S.DurationInputs>
         </S.FilterSection>
       </S.ModalContent>
 
       <S.ModalActions>
-        <Button variant="filter-toggle" onClick={onClose}>
+        <Button variant="filter-toggle" onClick={handleCancel}>
           Cancelar
         </Button>
         <Button variant="add-movie" onClick={handleApply}>
           Aplicar Filtro
         </Button>
       </S.ModalActions>
+    </>
+  );
+};
+
+const FiltersModal: React.FC<FiltersModalProps> = ({ isOpen, onClose, onApplyFilters }) => {
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} title="Filtros">
+      <FiltersModalContent onClose={onClose} onApplyFilters={onApplyFilters} />
     </Modal>
   );
 };

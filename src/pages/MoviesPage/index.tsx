@@ -13,8 +13,27 @@ const MoviesPage: React.FC = () => {
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
-  const [, setAppliedFilters] = useState<any>({});
+  const [appliedFilters, setAppliedFilters] = useState<any>({});
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+  
+  // Estados para paginação
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalMovies, setTotalMovies] = useState(28);
+  const moviesPerPage = 14; // Ajustado para mostrar o máximo que cabe na sua tela
+  const totalPages = Math.ceil(totalMovies / moviesPerPage); // Calcula dinamicamente
+  
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsSmallScreen(window.innerWidth <= 480);
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   const mockMovies: Movie[] = [
     {
@@ -212,14 +231,253 @@ const MoviesPage: React.FC = () => {
       updatedAt: "2025-01-17T20:05:42.229Z",
       userId: "8e0334a3-55cc-4fba-9d9f-72fce3450773",
       user: { id: "8e0334a3-55cc-4fba-9d9f-72fce3450773", name: "joao", email: "jo.soares@hotmail.com" }
+    },
+    {
+      id: 15,
+      title: "O Poderoso Chefão",
+      originalTitle: "The Godfather",
+      description: "A história da família Corleone, uma das mais poderosas famílias do crime organizado nos Estados Unidos.",
+      releaseDate: "1972-03-24T00:00:00.000Z",
+      duration: 175,
+      budget: 6000000,
+      imageUrl: "https://br.web.img3.acsta.net/medias/nmedia/18/90/93/20/20120876.jpg",
+      createdAt: "2025-01-17T20:05:42.229Z",
+      updatedAt: "2025-01-17T20:05:42.229Z",
+      userId: "8e0334a3-55cc-4fba-9d9f-72fce3450773",
+      user: { id: "8e0334a3-55cc-4fba-9d9f-72fce3450773", name: "joao", email: "jo.soares@hotmail.com" }
+    },
+    {
+      id: 16,
+      title: "Pulp Fiction",
+      originalTitle: "Pulp Fiction",
+      description: "Histórias entrelaçadas de crime e redenção em Los Angeles.",
+      releaseDate: "1994-10-14T00:00:00.000Z",
+      duration: 154,
+      budget: 8000000,
+      imageUrl: "https://br.web.img3.acsta.net/medias/nmedia/18/90/93/20/20120876.jpg",
+      createdAt: "2025-01-17T20:05:42.229Z",
+      updatedAt: "2025-01-17T20:05:42.229Z",
+      userId: "8e0334a3-55cc-4fba-9d9f-72fce3450773",
+      user: { id: "8e0334a3-55cc-4fba-9d9f-72fce3450773", name: "joao", email: "jo.soares@hotmail.com" }
+    },
+    {
+      id: 17,
+      title: "Forrest Gump",
+      originalTitle: "Forrest Gump",
+      description: "A vida de um homem simples que vive momentos históricos dos Estados Unidos.",
+      releaseDate: "1994-07-06T00:00:00.000Z",
+      duration: 142,
+      budget: 55000000,
+      imageUrl: "https://br.web.img3.acsta.net/medias/nmedia/18/90/93/20/20120876.jpg",
+      createdAt: "2025-01-17T20:05:42.229Z",
+      updatedAt: "2025-01-17T20:05:42.229Z",
+      userId: "8e0334a3-55cc-4fba-9d9f-72fce3450773",
+      user: { id: "8e0334a3-55cc-4fba-9d9f-72fce3450773", name: "joao", email: "jo.soares@hotmail.com" }
+    },
+    {
+      id: 18,
+      title: "Matrix",
+      originalTitle: "The Matrix",
+      description: "Um programador descobre que a realidade é uma simulação computacional.",
+      releaseDate: "1999-03-31T00:00:00.000Z",
+      duration: 136,
+      budget: 63000000,
+      imageUrl: "https://br.web.img3.acsta.net/medias/nmedia/18/90/93/20/20120876.jpg",
+      createdAt: "2025-01-17T20:05:42.229Z",
+      updatedAt: "2025-01-17T20:05:42.229Z",
+      userId: "8e0334a3-55cc-4fba-9d9f-72fce3450773",
+      user: { id: "8e0334a3-55cc-4fba-9d9f-72fce3450773", name: "joao", email: "jo.soares@hotmail.com" }
+    },
+    {
+      id: 19,
+      title: "Titanic",
+      originalTitle: "Titanic",
+      description: "Uma história de amor a bordo do navio mais famoso da história.",
+      releaseDate: "1997-12-19T00:00:00.000Z",
+      duration: 194,
+      budget: 200000000,
+      imageUrl: "https://br.web.img3.acsta.net/medias/nmedia/18/90/93/20/20120876.jpg",
+      createdAt: "2025-01-17T20:05:42.229Z",
+      updatedAt: "2025-01-17T20:05:42.229Z",
+      userId: "8e0334a3-55cc-4fba-9d9f-72fce3450773",
+      user: { id: "8e0334a3-55cc-4fba-9d9f-72fce3450773", name: "joao", email: "jo.soares@hotmail.com" }
+    },
+    {
+      id: 20,
+      title: "Avatar",
+      originalTitle: "Avatar",
+      description: "Um ex-fuzileiro naval explora um mundo alienígena habitável.",
+      releaseDate: "2009-12-18T00:00:00.000Z",
+      duration: 162,
+      budget: 237000000,
+      imageUrl: "https://br.web.img3.acsta.net/medias/nmedia/18/90/93/20/20120876.jpg",
+      createdAt: "2025-01-17T20:05:42.229Z",
+      updatedAt: "2025-01-17T20:05:42.229Z",
+      userId: "8e0334a3-55cc-4fba-9d9f-72fce3450773",
+      user: { id: "8e0334a3-55cc-4fba-9d9f-72fce3450773", name: "joao", email: "jo.soares@hotmail.com" }
+    },
+    {
+      id: 21,
+      title: "Interestelar",
+      originalTitle: "Interstellar",
+      description: "Um grupo de astronautas viaja através de um buraco de minhoca no espaço.",
+      releaseDate: "2014-11-07T00:00:00.000Z",
+      duration: 169,
+      budget: 165000000,
+      imageUrl: "https://br.web.img3.acsta.net/medias/nmedia/18/90/93/20/20120876.jpg",
+      createdAt: "2025-01-17T20:05:42.229Z",
+      updatedAt: "2025-01-17T20:05:42.229Z",
+      userId: "8e0334a3-55cc-4fba-9d9f-72fce3450773",
+      user: { id: "8e0334a3-55cc-4fba-9d9f-72fce3450773", name: "joao", email: "jo.soares@hotmail.com" }
+    },
+    {
+      id: 22,
+      title: "Inception",
+      originalTitle: "Inception",
+      description: "Um ladrão especializado em extrair segredos do subconsciente.",
+      releaseDate: "2010-07-16T00:00:00.000Z",
+      duration: 148,
+      budget: 160000000,
+      imageUrl: "https://br.web.img3.acsta.net/medias/nmedia/18/90/93/20/20120876.jpg",
+      createdAt: "2025-01-17T20:05:42.229Z",
+      updatedAt: "2025-01-17T20:05:42.229Z",
+      userId: "8e0334a3-55cc-4fba-9d9f-72fce3450773",
+      user: { id: "8e0334a3-55cc-4fba-9d9f-72fce3450773", name: "joao", email: "jo.soares@hotmail.com" }
+    },
+    {
+      id: 23,
+      title: "O Cavaleiro das Trevas",
+      originalTitle: "The Dark Knight",
+      description: "Batman enfrenta o Coringa em uma batalha épica por Gotham.",
+      releaseDate: "2008-07-18T00:00:00.000Z",
+      duration: 152,
+      budget: 185000000,
+      imageUrl: "https://br.web.img3.acsta.net/medias/nmedia/18/90/93/20/20120876.jpg",
+      createdAt: "2025-01-17T20:05:42.229Z",
+      updatedAt: "2025-01-17T20:05:42.229Z",
+      userId: "8e0334a3-55cc-4fba-9d9f-72fce3450773",
+      user: { id: "8e0334a3-55cc-4fba-9d9f-72fce3450773", name: "joao", email: "jo.soares@hotmail.com" }
+    },
+    {
+      id: 24,
+      title: "Gladiador",
+      originalTitle: "Gladiator",
+      description: "Um general romano busca vingança contra o imperador que matou sua família.",
+      releaseDate: "2000-05-05T00:00:00.000Z",
+      duration: 155,
+      budget: 103000000,
+      imageUrl: "https://br.web.img3.acsta.net/medias/nmedia/18/90/93/20/20120876.jpg",
+      createdAt: "2025-01-17T20:05:42.229Z",
+      updatedAt: "2025-01-17T20:05:42.229Z",
+      userId: "8e0334a3-55cc-4fba-9d9f-72fce3450773",
+      user: { id: "8e0334a3-55cc-4fba-9d9f-72fce3450773", name: "joao", email: "jo.soares@hotmail.com" }
+    },
+    {
+      id: 25,
+      title: "Os Infiltrados",
+      originalTitle: "The Departed",
+      description: "Um policial infiltrado e um criminoso infiltrado se enfrentam.",
+      releaseDate: "2006-10-06T00:00:00.000Z",
+      duration: 151,
+      budget: 90000000,
+      imageUrl: "https://br.web.img3.acsta.net/medias/nmedia/18/90/93/20/20120876.jpg",
+      createdAt: "2025-01-17T20:05:42.229Z",
+      updatedAt: "2025-01-17T20:05:42.229Z",
+      userId: "8e0334a3-55cc-4fba-9d9f-72fce3450773",
+      user: { id: "8e0334a3-55cc-4fba-9d9f-72fce3450773", name: "joao", email: "jo.soares@hotmail.com" }
+    },
+    {
+      id: 26,
+      title: "Whiplash",
+      originalTitle: "Whiplash",
+      description: "Um jovem baterista busca a perfeição sob a tutela de um instrutor implacável.",
+      releaseDate: "2014-10-15T00:00:00.000Z",
+      duration: 106,
+      budget: 3300000,
+      imageUrl: "https://br.web.img3.acsta.net/medias/nmedia/18/90/93/20/20120876.jpg",
+      createdAt: "2025-01-17T20:05:42.229Z",
+      updatedAt: "2025-01-17T20:05:42.229Z",
+      userId: "8e0334a3-55cc-4fba-9d9f-72fce3450773",
+      user: { id: "8e0334a3-55cc-4fba-9d9f-72fce3450773", name: "joao", email: "jo.soares@hotmail.com" }
+    },
+    {
+      id: 27,
+      title: "Blade Runner 2049",
+      originalTitle: "Blade Runner 2049",
+      description: "Um novo blade runner descobre um segredo que pode mergulhar a sociedade no caos.",
+      releaseDate: "2017-10-06T00:00:00.000Z",
+      duration: 164,
+      budget: 150000000,
+      imageUrl: "https://br.web.img3.acsta.net/medias/nmedia/18/90/93/20/20120876.jpg",
+      createdAt: "2025-01-17T20:05:42.229Z",
+      updatedAt: "2025-01-17T20:05:42.229Z",
+      userId: "8e0334a3-55cc-4fba-9d9f-72fce3450773",
+      user: { id: "8e0334a3-55cc-4fba-9d9f-72fce3450773", name: "joao", email: "jo.soares@hotmail.com" }
+    },
+    {
+      id: 28,
+      title: "Mad Max: Estrada da Fúria",
+      originalTitle: "Mad Max: Fury Road",
+      description: "Em um mundo pós-apocalíptico, Max ajuda Furiosa a escapar de um tirano.",
+      releaseDate: "2015-05-15T00:00:00.000Z",
+      duration: 120,
+      budget: 150000000,
+      imageUrl: "https://br.web.img3.acsta.net/medias/nmedia/18/90/93/20/20120876.jpg",
+      createdAt: "2025-01-17T20:05:42.229Z",
+      updatedAt: "2025-01-17T20:05:42.229Z",
+      userId: "8e0334a3-55cc-4fba-9d9f-72fce3450773",
+      user: { id: "8e0334a3-55cc-4fba-9d9f-72fce3450773", name: "joao", email: "jo.soares@hotmail.com" }
     }
   ];
 
-  const loadMovies = async () => {
+  const loadMovies = async (page: number = currentPage, filters: any = appliedFilters) => {
     try {
       setLoading(true);
       setError('');
-      setMovies(mockMovies);
+
+      // Simula delay da API
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Aplica filtros aos filmes mock
+      let filteredMovies = mockMovies;
+      
+      if (filters.title) {
+        filteredMovies = filteredMovies.filter(movie => 
+          movie.title.toLowerCase().includes(filters.title.toLowerCase()) ||
+          movie.originalTitle.toLowerCase().includes(filters.title.toLowerCase())
+        );
+      }
+      
+      if (filters.releaseYear) {
+        filteredMovies = filteredMovies.filter(movie => 
+          new Date(movie.releaseDate).getFullYear() === filters.releaseYear
+        );
+      }
+      
+      if (filters.minDuration) {
+        filteredMovies = filteredMovies.filter(movie => movie.duration >= filters.minDuration);
+      }
+      
+      if (filters.maxDuration) {
+        filteredMovies = filteredMovies.filter(movie => movie.duration <= filters.maxDuration);
+      }
+      
+      if (filters.minBudget) {
+        filteredMovies = filteredMovies.filter(movie => movie.budget >= filters.minBudget);
+      }
+      
+      if (filters.maxBudget) {
+        filteredMovies = filteredMovies.filter(movie => movie.budget <= filters.maxBudget);
+      }
+
+      // Simula a resposta da API com paginação
+      const startIndex = (page - 1) * moviesPerPage;
+      const endIndex = startIndex + moviesPerPage;
+      const paginatedMovies = filteredMovies.slice(startIndex, endIndex);
+
+      setMovies(paginatedMovies);
+      setCurrentPage(page);
+      setTotalMovies(filteredMovies.length);
     } catch (err) {
       setError('Erro ao carregar filmes. Tente novamente.');
       console.error('Erro ao carregar filmes:', err);
@@ -238,6 +496,8 @@ const MoviesPage: React.FC = () => {
 
   const handleApplyFilters = (filters: any) => {
     setAppliedFilters(filters);
+    setIsFiltersModalOpen(false);
+    loadMovies(1, filters); // Recarrega na primeira página com os novos filtros
   };
 
   const handleToggleFilters = () => {
@@ -248,6 +508,26 @@ const MoviesPage: React.FC = () => {
     setIsFiltersModalOpen(false);
   };
 
+  // Funções de paginação
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      loadMovies(page);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      handlePageChange(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      handlePageChange(currentPage + 1);
+    }
+  };
+
+  // Aplica filtro de busca local (já que os filtros principais são aplicados na API)
   const filteredMovies = movies.filter(movie =>
     movie.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     movie.originalTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -326,15 +606,52 @@ const MoviesPage: React.FC = () => {
 
       {filteredMovies.length > 0 && (
         <S.PaginationContainer>
-          <Button variant="pagination-disabled" disabled>
+          <Button 
+            variant={currentPage === 1 ? "pagination-disabled" : "pagination-arrow"}
+            disabled={currentPage === 1}
+            onClick={handlePreviousPage}
+          >
             ‹
           </Button>
-          <Button variant="pagination">1</Button>
-          <Button variant="pagination-active">2</Button>
-          <Button variant="pagination">3</Button>
-          <Button variant="pagination">4</Button>
-          <Button variant="pagination">5</Button>
-          <Button variant="pagination">
+          
+          {/* Renderiza os números das páginas */}
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => {
+            if (isSmallScreen && totalPages > 5) {
+              // Em telas pequenas, mostra apenas algumas páginas
+              if (page === 1 || page === totalPages || 
+                  (page >= currentPage - 1 && page <= currentPage + 1)) {
+                return (
+                  <Button
+                    key={page}
+                    variant={page === currentPage ? "pagination-active" : "pagination"}
+                    onClick={() => handlePageChange(page)}
+                  >
+                    {page}
+                  </Button>
+                );
+              } else if (page === currentPage - 2 || page === currentPage + 2) {
+                return <Button key={page} variant="pagination">...</Button>;
+              }
+              return null;
+            } else {
+              // Em telas maiores, mostra todas as páginas
+              return (
+                <Button
+                  key={page}
+                  variant={page === currentPage ? "pagination-active" : "pagination"}
+                  onClick={() => handlePageChange(page)}
+                >
+                  {page}
+                </Button>
+              );
+            }
+          })}
+          
+          <Button 
+            variant={currentPage === totalPages ? "pagination-disabled" : "pagination-arrow"}
+            disabled={currentPage === totalPages}
+            onClick={handleNextPage}
+          >
             ›
           </Button>
         </S.PaginationContainer>

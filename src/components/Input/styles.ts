@@ -25,30 +25,42 @@ export const InputField = styled.input<InputProps>`
   min-height: 44px;
   padding: ${({ variant }) => variant === 'search' ? '12px 16px' : '12px'};
   padding-right: ${({ variant }) => variant === 'search' ? '44px' : '12px'};
-  border: 1px solid var(--login-input-border);
+  border: 1px solid var(--input-border);
   border-radius: 4px;
-  font-size: 14px;
-  background: var(--login-input-bg);
-  color: var(--login-input-text);
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 16px;
+  line-height: 100%;
+  letter-spacing: 0px;
+  background-color: var(--input-bg);
+  color: var(--input-text);
   transition: border-color 0.3s ease;
+
+  ${({ variant }) => variant === 'search' && `
+    @media (max-width: 414px) {
+      font-weight: 700;
+    }
+  `}
 
   &:focus {
     outline: none;
-    border-color: var(--accent-primary);
-    background: var(--login-input-bg);
+    border-color: var(--input-focus-border);
+    background-color: var(--input-focus-bg);
+    caret-color: var(--input-cursor);
   }
 
   &::placeholder {
-    color: var(--login-input-text);
+    color: var(--input-placeholder);
   }
 
   &:-webkit-autofill,
   &:-webkit-autofill:hover,
   &:-webkit-autofill:focus,
   &:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 30px var(--login-input-bg) inset !important;
-    -webkit-text-fill-color: var(--login-input-text) !important;
-    background-color: var(--login-input-bg) !important;
+    -webkit-box-shadow: 0 0 0 30px var(--input-bg) inset !important;
+    -webkit-text-fill-color: var(--input-text) !important;
+    background-color: var(--input-bg) !important;
   }
 `;
 
@@ -57,6 +69,6 @@ export const IconContainer = styled.div`
   right: 12px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--login-input-text);
+  color: var(--input-placeholder);
   pointer-events: none;
 `;

@@ -2,7 +2,7 @@ import React from 'react';
 import * as S from './styles';
 
 interface InputProps {
-  type?: 'text' | 'email' | 'password' | 'search';
+  type?: 'text' | 'email' | 'password' | 'search' | 'number';
   placeholder?: string;
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -12,6 +12,10 @@ interface InputProps {
   disabled?: boolean;
   name?: string;
   id?: string;
+  inputMode?: 'search' | 'none' | 'text' | 'email' | 'numeric' | 'tel' | 'url' | 'decimal';
+  pattern?: string;
+  min?: string;
+  max?: string;
 }
 
 const Input: React.FC<InputProps> = ({
