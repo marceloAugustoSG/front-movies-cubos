@@ -8,27 +8,23 @@ const spin = keyframes`
 export const LoadingContainer = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  font-size: 18px;
-  text-align: center;
-  padding: 20px;
+  justify-content: center;
+  padding: 40px;
+  gap: 20px;
 `;
 
-export const LoadingSpinner = styled.div`
-  width: 50px;
-  height: 50px;
-  border: 5px solid var(--border-color);
-  border-top: 5px solid var(--accent-primary);
+export const Spinner = styled.div`
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--bg-tertiary);
+  border-top: 4px solid var(--accent-primary);
   border-radius: 50%;
   animation: ${spin} 1s linear infinite;
-  margin-bottom: 20px;
 `;
 
-export const LoadingMessage = styled.p`
-  font-size: 1.2em;
+export const LoadingText = styled.p`
   color: var(--text-secondary);
+  font-size: 16px;
+  margin: 0;
 `;

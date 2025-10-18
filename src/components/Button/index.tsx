@@ -2,7 +2,7 @@ import React from 'react';
 import * as S from './styles';
 
 interface ButtonProps {
-  variant?: 'primary' | 'secondary' | 'logout' | 'login';
+  variant?: 'primary' | 'secondary' | 'logout' | 'login' | 'add-movie' | 'filter' | 'filter-toggle' | 'pagination' | 'pagination-active' | 'pagination-disabled';
   size?: 'small' | 'medium' | 'large';
   children: React.ReactNode;
   onClick?: () => void;

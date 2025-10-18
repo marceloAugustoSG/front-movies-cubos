@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
@@ -10,6 +10,18 @@ const Header: React.FC = () => {
   const { logout, user } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth <= 414);
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -19,7 +31,7 @@ const Header: React.FC = () => {
   return (
     <S.HeaderContainer>
       <S.Logo>
-        <img src="/logo_cubos.svg" alt="Cubos Logo" />
+        <img src={isMobile ? '/logo_mobile.svg' : '/logo_cubos.svg'} alt="Cubos Logo" />
         <S.LogoText>Movies</S.LogoText>
       </S.Logo>
       
@@ -28,7 +40,7 @@ const Header: React.FC = () => {
           onClick={toggleTheme}
           title={`Alternar para tema ${theme === 'dark' ? 'claro' : 'escuro'}`}
         >
-          {theme === 'dark' ? <Sun size={20} fill="currentColor" /> : <Moon size={20} fill="currentColor" />}
+          {theme === 'dark' ? <Sun fill="currentColor" /> : <Moon fill="currentColor" />}
         </S.ThemeToggleButton>
         
         <Button 

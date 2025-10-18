@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import Button from '../../components/Button';
+import Input from '../../components/Input';
 import type { LoginCredentials } from '../../types';
 import * as S from './styles';
 
@@ -45,22 +46,22 @@ const LoginPage: React.FC = () => {
     <S.LoginContainer>
       <S.LoginCard>
         <S.Form onSubmit={handleSubmit}>
-          <S.InputGroup>
-            <S.Label htmlFor="email">Nome/E-mail</S.Label>
-            <S.Input
-              type="email"
-              id="email"
-              name="email"
-              value={credentials.email}
-              onChange={handleInputChange}
-              placeholder="Digite seu nome/E-mail"
-              required
-            />
-          </S.InputGroup>
-          
+                  <S.InputGroup>
+                    <S.Label htmlFor="email">Nome/E-mail</S.Label>
+                    <Input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={credentials.email}
+                      onChange={handleInputChange}
+                      placeholder="Digite seu nome/E-mail"
+                      required
+                    />
+                  </S.InputGroup>
+                  
                   <S.InputGroup>
                     <S.Label htmlFor="password">Senha</S.Label>
-                    <S.Input
+                    <Input
                       type="password"
                       id="password"
                       name="password"
@@ -84,9 +85,7 @@ const LoginPage: React.FC = () => {
           {error && <S.ErrorMessage>{error}</S.ErrorMessage>}
         </S.Form>
         
-        <S.RegisterLink>
-          Não tem uma conta? <Link to="/register">Criar conta</Link>
-        </S.RegisterLink>
+      
       </S.LoginCard>
     </S.LoginContainer>
   );

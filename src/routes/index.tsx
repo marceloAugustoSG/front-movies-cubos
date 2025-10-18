@@ -3,7 +3,7 @@ import HomePage from "../pages/HomePage/index";
 import LoginPage from "../pages/LoginPage/index";
 import RegisterPage from "../pages/RegisterPage/index";
 import DashboardPage from "../pages/DashboardPage/index";
-import MoviesPage from "../pages/MoviesPage/index";
+import MoviesPageWrapper from "../pages/MoviesPage/MoviesPageWrapper";
 import ErrorPage from "../pages/ErrorPage/index";
 import ProtectedRoute from "../components/ProtectedRoute/index";
 import Layout from "../components/Layout/index";
@@ -47,9 +47,7 @@ const router = createBrowserRouter([
     path: "/movies",
     element: (
       <ProtectedRoute>
-        <Layout>
-          <MoviesPage />
-        </Layout>
+        <MoviesPageWrapper />
       </ProtectedRoute>
     ),
   },

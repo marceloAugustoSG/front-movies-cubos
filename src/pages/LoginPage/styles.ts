@@ -5,7 +5,7 @@ export const LoginContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  min-height: calc(100vh - 140px);
   background: 
     var(--background-gradient),
     url('/background_cinema_cubos.png');
@@ -25,7 +25,7 @@ export const LoginCard = styled.div`
   border-radius: 4px;
   box-shadow: 0 10px 30px var(--shadow);
   padding: 16px;
-  margin: 0 0 100px 0;
+  margin: 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -62,28 +62,6 @@ export const Label = styled.label`
   text-align: left;
   color: var(--login-label-text);
   margin-bottom: 8px;
-`;
-
-export const Input = styled.input`
-  width: 380px;
-  height: 44px;
-  min-height: 44px;
-  padding: 12px;
-  border: 1px solid var(--login-input-border);
-  border-radius: 4px;
-  font-size: 14px;
-  background: var(--login-input-bg);
-  color: var(--login-input-text);
-  transition: border-color 0.3s ease;
-
-  &:focus {
-    outline: none;
-    border-color: var(--accent-primary);
-  }
-
-  &::placeholder {
-    color: var(--text-muted);
-  }
 `;
 
 export const ErrorMessage = styled.div`

@@ -5,7 +5,7 @@ export const RegisterContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  min-height: calc(100vh - 140px);
   background: 
     var(--background-gradient),
     url('/background_cinema_cubos.png');
@@ -25,7 +25,7 @@ export const RegisterCard = styled.div`
   width: 100%;
   max-width: 400px;
   border: 1px solid var(--border-color);
-  margin: 0 0 100px 0;
+  margin: 0;
 `;
 
 export const Title = styled.h1`

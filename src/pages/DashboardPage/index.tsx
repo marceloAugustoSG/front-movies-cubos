@@ -1,34 +1,27 @@
 import React from 'react';
-import { useAuth } from '../../contexts/AuthContext';
-import { useTheme } from '../../contexts/ThemeContext';
+import { useNavigate } from 'react-router-dom';
+import Button from '../../components/Button';
 import * as S from './styles';
 
 const DashboardPage: React.FC = () => {
-  const { user } = useAuth();
-  const { theme } = useTheme();
+  const navigate = useNavigate();
 
   return (
     <S.DashboardContainer>
-      <S.DashboardCard>
-        <S.Header>
-          <S.Title>Dashboard</S.Title>
-        </S.Header>
-        
-        <S.UserInfo>
-          👤 Bem-vindo, <strong>{user?.name}</strong>!
-        </S.UserInfo>
-        
-        <S.Content>
-          <p>✅ Você está logado com sucesso!</p>
-          <p>
-            📧 Email: {user?.email}
-          </p>
-          <p>
-            🆔 ID: {user?.id}
-          </p>
-          <p>Tema atual: <strong>{theme === 'dark' ? '🌙 Escuro' : '☀️ Claro'}</strong></p>
-        </S.Content>
-      </S.DashboardCard>
+      <S.DashboardContent>
+        <S.Title>📊 Dashboard</S.Title>
+        <S.Description>
+          Bem-vindo ao seu painel de controle de filmes.
+        </S.Description>
+        <S.ButtonGroup>
+          <Button variant="primary" onClick={() => navigate('/movies')}>
+            Ver Filmes
+          </Button>
+          <Button variant="add-movie" onClick={() => navigate('/movies/new')}>
+            Adicionar Filme
+          </Button>
+        </S.ButtonGroup>
+      </S.DashboardContent>
     </S.DashboardContainer>
   );
 };

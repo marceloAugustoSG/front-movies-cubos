@@ -1,33 +1,35 @@
 import styled from 'styled-components';
 
 export const HomeContainer = styled.div`
+  min-height: calc(100vh - 140px);
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
-  color: white;
-  text-align: center;
   padding: 20px;
 `;
 
-export const Title = styled.h1`
-  font-size: 48px;
-  margin-bottom: 20px;
-  font-weight: 700;
+export const HomeContent = styled.div`
+  text-align: center;
+  max-width: 600px;
 `;
 
-export const Subtitle = styled.p`
-  font-size: 24px;
+export const Title = styled.h1`
+  color: var(--text-primary);
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+`;
+
+export const Description = styled.p`
+  color: var(--text-secondary);
+  font-size: 1.2rem;
   margin-bottom: 40px;
-  opacity: 0.9;
+  line-height: 1.6;
 `;
 
 export const ButtonGroup = styled.div`
   display: flex;
   gap: 20px;
-  flex-wrap: wrap;
   justify-content: center;
+  flex-wrap: wrap;
 `;
-

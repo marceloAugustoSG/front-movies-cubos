@@ -21,7 +21,7 @@
   
   --login-card-bg: #232225;
   --login-input-bg: #1A191B;
-  --login-input-text: #1A191B;
+  --login-input-text: #6F6D78;
   --login-input-border: #3C393F;
   --login-label-text: #EEEEF0;
   --login-button-bg: #8E4EC6;
@@ -40,6 +40,7 @@
   --color-white: #FFFFFF;
   --text-footer: #B5B2BC;
   --background-footer: #12111380;
+  --movies-content-bg: #EBEAF814;
 }
 
 [data-theme="light"] {
@@ -56,7 +57,7 @@
   
   --login-card-bg: #f8f9fa;
   --login-input-bg: #ffffff;
-  --login-input-text: #212529;
+  --login-input-text: #6F6D78;
   --login-input-border: #8E4EC6;
   --login-label-text: #495057;
   --login-button-bg: #8E4EC6;
@@ -75,6 +76,7 @@
   --color-white: #FFFFFF;
   --text-footer: #B5B2BC;
   --background-footer: #12111380;
+  --movies-content-bg: #EBEAF814;
 }
 
 * {
@@ -102,4 +104,17 @@ body:not(.has-layout) {
 body.has-layout {
   background-color: transparent !important;
   background-image: none !important;
+}
+
+input:focus {
+  background-color: inherit !important;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px inherit inset !important;
+  -webkit-text-fill-color: inherit !important;
+  background-color: inherit !important;
 }

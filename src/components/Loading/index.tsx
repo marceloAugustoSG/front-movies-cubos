@@ -8,8 +8,8 @@ interface LoadingProps {
 const Loading: React.FC<LoadingProps> = ({ message = "Carregando..." }) => {
   return (
     <S.LoadingContainer>
-      <S.LoadingSpinner />
-      <S.LoadingMessage>{message}</S.LoadingMessage>
+      <S.Spinner />
+      <S.LoadingText>{message}</S.LoadingText>
     </S.LoadingContainer>
   );
 };
