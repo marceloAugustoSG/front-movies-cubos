@@ -1,11 +1,17 @@
 
-function App() {
+import { RouterProvider } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
+import { ThemeProvider } from './contexts/ThemeContext';
+import router from './routes';
 
+function App() {
   return (
-    <>
-    <h1>Hello World</h1>
-    </>
-  )
+    <ThemeProvider>
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
+    </ThemeProvider>
+  );
 }
 
-export default App
+export default App;

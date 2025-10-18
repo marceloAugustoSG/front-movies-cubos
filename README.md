@@ -1,73 +1,86 @@
-# React + TypeScript + Vite
+# Front Movies Cubos
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Sistema de gerenciamento de filmes desenvolvido com React, TypeScript e Styled Components.
 
-Currently, two official plugins are available:
+## 🚀 Configuração do Ambiente
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Variáveis de Ambiente
 
-## React Compiler
+Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```env
+# Configurações da API
+VITE_API_BASE_URL=http://localhost:3000
+VITE_API_TIMEOUT=10000
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Configurações de ambiente
+VITE_APP_ENV=development
+VITE_APP_NAME=Front Movies Cubos
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Variáveis para Produção
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Para deploy em produção, configure:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```env
+# Produção
+VITE_API_BASE_URL=https://sua-api.com
+VITE_API_TIMEOUT=15000
+VITE_APP_ENV=production
+VITE_APP_NAME=Front Movies Cubos
 ```
+
+## 📦 Instalação
+
+```bash
+# Instalar dependências
+yarn install
+
+# Executar em desenvolvimento
+yarn dev
+
+# Build para produção
+yarn build
+
+# Preview do build
+yarn preview
+```
+
+## 🌐 Deploy
+
+### Vercel
+1. Conecte seu repositório
+2. Configure as variáveis de ambiente no painel da Vercel
+3. Deploy automático
+
+### Netlify
+1. Conecte seu repositório
+2. Configure as variáveis de ambiente no painel da Netlify
+3. Deploy automático
+
+### Docker
+```dockerfile
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN yarn install
+COPY . .
+RUN yarn build
+EXPOSE 3000
+CMD ["yarn", "preview"]
+```
+
+## 🔧 Configurações
+
+- **Desenvolvimento**: Usa proxy para `localhost:3000`
+- **Produção**: Usa URL da API configurada nas variáveis de ambiente
+- **Validação**: Verifica variáveis obrigatórias na inicialização
+
+## 📱 Funcionalidades
+
+- ✅ Autenticação (Login/Registro)
+- ✅ Listagem de filmes
+- ✅ Busca e filtros
+- ✅ Tema claro/escuro
+- ✅ Responsividade
+- ✅ Componentes reutilizáveis
