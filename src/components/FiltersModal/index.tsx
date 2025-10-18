@@ -121,11 +121,11 @@ const FiltersModalContent: React.FC<Omit<FiltersModalProps, 'isOpen'>> = ({ onCl
       </S.ModalContent>
 
       <S.ModalActions>
-        <Button variant="filter-toggle" onClick={handleCancel}>
+        <Button variant="modal-cancel" onClick={handleCancel}>
           Cancelar
         </Button>
-        <Button variant="add-movie" onClick={handleApply}>
-          Aplicar Filtro
+        <Button variant="modal-apply" onClick={handleApply}>
+          Aplicar Filtros
         </Button>
       </S.ModalActions>
     </>

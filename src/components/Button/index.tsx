@@ -2,7 +2,7 @@ import React from 'react';
 import * as S from './styles';
 
 interface ButtonProps {
-  variant?: 'primary' | 'secondary' | 'logout' | 'login' | 'add-movie' | 'filter' | 'filter-toggle' | 'pagination' | 'pagination-active' | 'pagination-disabled' | 'pagination-arrow';
+  variant?: 'primary' | 'secondary' | 'logout' | 'login' | 'add-movie' | 'filter' | 'filter-toggle' | 'pagination' | 'pagination-active' | 'pagination-disabled' | 'pagination-arrow' | 'drawer-cancel' | 'drawer-add' | 'modal-cancel' | 'modal-apply';
   size?: 'small' | 'medium' | 'large';
   children: React.ReactNode;
   onClick?: () => void;

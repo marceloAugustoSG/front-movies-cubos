@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 interface ButtonProps {
-  variant?: 'primary' | 'secondary' | 'logout' | 'login' | 'add-movie' | 'filter' | 'filter-toggle' | 'pagination' | 'pagination-active' | 'pagination-disabled' | 'pagination-arrow';
+  variant?: 'primary' | 'secondary' | 'logout' | 'login' | 'add-movie' | 'filter' | 'filter-toggle' | 'pagination' | 'pagination-active' | 'pagination-disabled' | 'pagination-arrow' | 'drawer-cancel' | 'drawer-add' | 'modal-cancel' | 'modal-apply';
   size?: 'small' | 'medium' | 'large';
   children: React.ReactNode;
   onClick?: () => void;
@@ -99,7 +99,7 @@ export const ButtonContainer = styled.button<ButtonProps>`
                 return `
                   background-color: var(--button-primary-bg);
                   color: var(--color-white);
-                  width: 139px;
+                  width: 151px;
                   height: 44px;
                   border-radius: 2px;
                   padding: 0;
@@ -127,7 +127,7 @@ export const ButtonContainer = styled.button<ButtonProps>`
                   @media (min-width: 415px) {
                     flex: 1;
                     width: auto;
-                    min-width: 139px;
+                    min-width: 151px;
                   }
                 `;
               case 'filter':
@@ -149,7 +149,7 @@ export const ButtonContainer = styled.button<ButtonProps>`
                 return `
                   background-color: var(--button-secondary-bg);
                   color: var(--theme-toggle-text);
-                  width: 98px;
+                  width: 103px;
                   height: 44px;
                   border-radius: 2px;
                   padding: 0 16px;
@@ -176,13 +176,13 @@ export const ButtonContainer = styled.button<ButtonProps>`
                   @media (min-width: 415px) {
                     flex: 1;
                     width: auto;
-                    min-width: 98px;
+                    min-width: 103px;
                   }
                 `;
               case 'pagination':
                 return `
                   background-color: var(--button-primary-bg);
-                  color: #FFFFFF;
+                  color: var(--color-white);
                   width: 50px;
                   height: 45px;
                   border-radius: 4px;
@@ -235,8 +235,8 @@ export const ButtonContainer = styled.button<ButtonProps>`
                 `;
               case 'pagination-active':
                 return `
-                  background-color: #EBEAF814;
-                  color: #EAE6FD6E;
+                  background-color: var(--button-secondary-disabled);
+                  color: var(--input-text);
                   width: 50px;
                   height: 45px;
                   border-radius: 4px;
@@ -251,15 +251,15 @@ export const ButtonContainer = styled.button<ButtonProps>`
                   text-align: center;
                   
                   &:hover {
-                    background-color: #EBEAF814;
+                    background-color: var(--button-secondary-disabled);
                   }
                   
                   &:active {
-                    background-color: #EBEAF814;
+                    background-color: var(--button-secondary-disabled);
                   }
                   
                   &:disabled {
-                    background-color: #EBEAF814;
+                    background-color: var(--button-secondary-disabled);
                     cursor: not-allowed;
                   }
                   
@@ -290,7 +290,7 @@ export const ButtonContainer = styled.button<ButtonProps>`
               case 'pagination-disabled':
                 return `
                   background-color: var(--button-secondary-disabled);
-                  color: #6F6D78;
+                  color: var(--button-primary-disabled);
                   width: 64px;
                   height: 44px;
                   border-radius: 4px;
@@ -345,7 +345,7 @@ export const ButtonContainer = styled.button<ButtonProps>`
               case 'pagination-arrow':
                 return `
                   background-color: var(--button-primary-bg);
-                  color: #FFFFFF;
+                  color: var(--color-white);
                   width: 64px;
                   height: 44px;
                   border-radius: 4px;
@@ -394,6 +394,100 @@ export const ButtonContainer = styled.button<ButtonProps>`
                     width: 64px;
                     height: 45px;
                     font-size: 16px;
+                  }
+                `;
+              case 'drawer-cancel':
+                return `
+                  background-color: var(--button-secondary-bg);
+                  color: var(--theme-toggle-text);
+                  width: 103px;
+                  height: 44px;
+                  border-radius: 2px;
+                  padding: 0 16px;
+                  border: none;
+        
+                  &:hover {
+                    background-color: var(--button-secondary-hover);
+                  }
+                  
+                  &:active {
+                    background-color: var(--button-secondary-active);
+                  }
+                  
+                  &:disabled {
+                    background-color: var(--button-secondary-disabled);
+                    cursor: not-allowed;
+                  }
+                `;
+              case 'drawer-add':
+                return `
+                  background-color: var(--button-primary-bg);
+                  color: var(--color-white);
+                  width: 151px;
+                  height: 44px;
+                  border-radius: 2px;
+                  padding: 0;
+                  white-space: nowrap;
+        
+                  &:hover {
+                    background-color: var(--button-primary-hover);
+                    box-shadow: 0 5px 15px var(--button-shadow);
+                  }
+                  
+                  &:active {
+                    background-color: var(--button-primary-active);
+                  }
+                  
+                  &:disabled {
+                    background-color: var(--button-primary-disabled);
+                    cursor: not-allowed;
+                  }
+                `;
+              case 'modal-cancel':
+                return `
+                  background-color: var(--button-secondary-bg);
+                  color: var(--theme-toggle-text);
+                  width: 103px;
+                  height: 44px;
+                  border-radius: 2px;
+                  padding: 0 16px;
+                  border: none;
+        
+                  &:hover {
+                    background-color: var(--button-secondary-hover);
+                  }
+                  
+                  &:active {
+                    background-color: var(--button-secondary-active);
+                  }
+                  
+                  &:disabled {
+                    background-color: var(--button-secondary-disabled);
+                    cursor: not-allowed;
+                  }
+                `;
+              case 'modal-apply':
+                return `
+                  background-color: var(--button-primary-bg);
+                  color: var(--color-white);
+                  width: 151px;
+                  height: 44px;
+                  border-radius: 2px;
+                  padding: 0;
+                  white-space: nowrap;
+        
+                  &:hover {
+                    background-color: var(--button-primary-hover);
+                    box-shadow: 0 5px 15px var(--button-shadow);
+                  }
+                  
+                  &:active {
+                    background-color: var(--button-primary-active);
+                  }
+                  
+                  &:disabled {
+                    background-color: var(--button-primary-disabled);
+                    cursor: not-allowed;
                   }
                 `;
       case 'primary':

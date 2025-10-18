@@ -318,6 +318,20 @@ export const Header = styled.div`
   margin-bottom: 24px;
 `;
 
+export const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+`;
+
+export const LoadingMessage = styled.div`
+  color: var(--text-primary);
+  font-size: 18px;
+  text-align: center;
+  padding: 40px;
+`;
+
 export const ErrorMessage = styled.div`
   background-color: #ff6b6b;
   color: white;
@@ -327,9 +341,40 @@ export const ErrorMessage = styled.div`
   text-align: center;
 `;
 
-export const LoadingContainer = styled.div`
+export const MovieImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+`;
+
+export const MovieInfo = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  padding: 20px 16px 16px;
+  color: var(--color-white);
+`;
+
+export const MovieDescription = styled.p`
+  font-size: 14px;
+  margin: 8px 0;
+  line-height: 1.4;
+  color: var(--color-white);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+`;
+
+export const MovieDetails = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 40px;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+`;
+
+export const MovieDetail = styled.span`
+  font-size: 12px;
+  color: var(--color-white);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 `;
