@@ -8,14 +8,11 @@ export const InputContainer = styled.div<InputProps>`
   position: relative;
   display: flex;
   align-items: center;
-  width: ${({ variant }) => variant === 'search' ? '300px' : '380px'};
+  width: 100%;
+  max-width: ${({ variant }) => variant === 'search' ? '300px' : 'none'};
   
   @media (max-width: 768px) {
-    width: 100%;
-  }
-  
-  @media (min-width: 769px) {
-    width: ${({ variant }) => variant === 'search' ? '300px' : '380px'};
+    max-width: none;
   }
 `;
 
@@ -61,6 +58,17 @@ export const InputField = styled.input<InputProps>`
     -webkit-box-shadow: 0 0 0 30px var(--input-bg) inset !important;
     -webkit-text-fill-color: var(--input-text) !important;
     background-color: var(--input-bg) !important;
+  }
+
+  /* Remove number input spinners */
+  &[type="number"] {
+    -moz-appearance: textfield;
+    
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
   }
 `;
 

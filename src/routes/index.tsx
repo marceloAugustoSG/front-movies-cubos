@@ -4,6 +4,7 @@ import LoginPage from "../pages/LoginPage/index";
 import RegisterPage from "../pages/RegisterPage/index";
 import DashboardPage from "../pages/DashboardPage/index";
 import MoviesPageWrapper from "../pages/MoviesPage/MoviesPageWrapper";
+import MovieDetailsPage from "../pages/MovieDetailsPage/index";
 import ErrorPage from "../pages/ErrorPage/index";
 import ProtectedRoute from "../components/ProtectedRoute/index";
 import Layout from "../components/Layout/index";
@@ -48,6 +49,14 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <MoviesPageWrapper />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/movies/:id",
+    element: (
+      <ProtectedRoute>
+        <MovieDetailsPage />
       </ProtectedRoute>
     ),
   },

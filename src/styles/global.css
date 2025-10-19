@@ -59,6 +59,16 @@
   --text-footer: #B5B2BC;
   --background-footer: #12111380;
   --movies-content-bg: #EBEAF814;
+  --synopsis-text: #EEEEF0;
+  --synopsis-bg: #23222599;
+  --genre-bg: #C150FF2E;
+  --genre-text: #ECD9FA;
+  
+  --rating-circle-bg: #232225;
+  --rating-circle-progress: #FFE000;
+  --rating-circle-empty: #3C393F;
+  --rating-text-number: #FFD700;
+  --rating-text-percent: #B5B2BC;
 }
 
 [data-theme="light"] {
@@ -113,6 +123,16 @@
   --text-footer: #B5B2BC;
   --background-footer: #12111380;
   --movies-content-bg: #EBEAF814;
+  --synopsis-text: #EEEEF0;
+  --synopsis-bg: #23222599;
+  --genre-bg: #C150FF2E;
+  --genre-text: #ECD9FA;
+  
+  --rating-circle-bg: #232225;
+  --rating-circle-progress: #FFE000;
+  --rating-circle-empty: #3C393F;
+  --rating-text-number: #FFD700;
+  --rating-text-percent: #B5B2BC;
 }
 
 * {

@@ -6,13 +6,18 @@ export const DrawerContent = styled.div`
   gap: 16px;
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 20px;
+  width: 100%;
+  box-sizing: border-box;
 `;
 
 export const FormSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
 `;
 
 export const FormLabel = styled.label`

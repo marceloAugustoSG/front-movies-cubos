@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type { AxiosInstance, AxiosResponse } from 'axios';
 import { API_CONFIG } from './config';
-import type { Movie, MoviesResponse } from '../types';
+import type { Movie, MoviesResponse, CreateMovieRequest } from '../types';
 
 class MoviesService {
   private api: AxiosInstance;
@@ -41,10 +41,22 @@ class MoviesService {
     );
   }
 
-  async getMovies(page: number = 1, limit: number = 10): Promise<Movie[]> {
+  async getMovies(page: number = 1, limit: number = 10, filters?: any): Promise<Movie[]> {
     try {
+      const params = new URLSearchParams();
+      params.append('page', page.toString());
+      params.append('limit', limit.toString());
+      
+      // Adicionar filtros se existirem
+      if (filters?.title) params.append('title', filters.title);
+      if (filters?.releaseYear) params.append('releaseYear', filters.releaseYear);
+      if (filters?.minDuration) params.append('minDuration', filters.minDuration);
+      if (filters?.maxDuration) params.append('maxDuration', filters.maxDuration);
+      if (filters?.minBudget) params.append('minBudget', filters.minBudget);
+      if (filters?.maxBudget) params.append('maxBudget', filters.maxBudget);
+      
       const response: AxiosResponse<Movie[]> = await this.api.get(
-        `${API_CONFIG.ENDPOINTS.MOVIES}?page=${page}&limit=${limit}`
+        `${API_CONFIG.ENDPOINTS.MOVIES}?${params.toString()}`
       );
       return response.data;
     } catch (error: any) {
@@ -75,7 +87,7 @@ class MoviesService {
     }
   }
 
-  async createMovie(movieData: Partial<Movie>): Promise<Movie> {
+  async createMovie(movieData: CreateMovieRequest): Promise<Movie> {
     try {
       const response: AxiosResponse<Movie> = await this.api.post(
         API_CONFIG.ENDPOINTS.MOVIES,

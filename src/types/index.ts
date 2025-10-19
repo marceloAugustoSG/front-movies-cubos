@@ -19,16 +19,45 @@ export interface AuthContextType {
 export interface Movie {
   id: number;
   title: string;
-  originalTitle: string;
-  description: string;
+  originalTitle?: string;
+  description?: string;
   releaseDate: string;
   duration: number;
-  budget: number;
-  imageUrl: string;
+  budget?: number;
+  revenue?: number;
+  profit?: number;
+  imageUrl?: string;
+  trailerUrl?: string;
+  rating?: number;
+  voteCount?: number;
+  ageRating?: string;
+  status?: string;
+  language?: string;
+  genres?: string;
   createdAt: string;
   updatedAt: string;
   userId: string;
   user: User;
+}
+
+export interface CreateMovieRequest {
+  title: string;
+  originalTitle?: string;
+  description?: string;
+  releaseDate: string;
+  duration: number;
+  budget?: number;
+  revenue?: number;
+  profit?: number;
+  imageUrl?: string;
+  trailerUrl?: string;
+  rating?: number;
+  voteCount?: number;
+  ageRating?: string;
+  status?: string;
+  language?: string;
+  genres?: string[];
+  userId: string;
 }
 
 export interface MoviesResponse {

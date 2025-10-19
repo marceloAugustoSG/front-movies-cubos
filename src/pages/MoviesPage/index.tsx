@@ -5,6 +5,7 @@ import Button from '../../components/Button';
 import Input from '../../components/Input';
 import FiltersModal from '../../components/FiltersModal';
 import AddMovieDrawer from '../../components/AddMovieDrawer';
+import { moviesService } from '../../api/moviesService';
 import type { Movie } from '../../types';
 import * as S from './styles';
 
@@ -24,83 +25,39 @@ const MoviesPage: React.FC = () => {
   
   const navigate = useNavigate();
 
-  const mockMovies: Movie[] = [
-    {
-      id: 1,
-      title: "Capitã Marvel",
-      originalTitle: "Captain Marvel",
-      description: "Uma guerreira alienígena que se torna uma das mais poderosas heroínas do universo.",
-      releaseDate: "2019-03-08T00:00:00.000Z",
-      duration: 124,
-      budget: 152000000,
-      imageUrl: "https://image.tmdb.org/t/p/w500/AtsgWhDnODqQWklEo1i0t8i2e.jpg",
-      createdAt: "2025-01-17T20:05:42.229Z",
-      updatedAt: "2025-01-17T20:05:42.229Z",
-      userId: "8e0334a3-55cc-4fba-9d9f-72fce3450773",
-      user: { id: "8e0334a3-55cc-4fba-9d9f-72fce3450773", name: "joao", email: "jo.soares@hotmail.com" }
-    }
-  ];
 
   const loadMovies = async (page: number = currentPage, filters: any = appliedFilters) => {
     try {
       setLoading(true);
       setError('');
       
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Construir parâmetros de query para a API
+      const queryParams = new URLSearchParams();
+      queryParams.append('page', page.toString());
+      queryParams.append('limit', moviesPerPage.toString());
       
-      let filteredMovies = [...mockMovies];
+      // Adicionar filtros se existirem
+      if (filters.title) queryParams.append('title', filters.title);
+      if (filters.releaseYear) queryParams.append('releaseYear', filters.releaseYear);
+      if (filters.minDuration) queryParams.append('minDuration', filters.minDuration);
+      if (filters.maxDuration) queryParams.append('maxDuration', filters.maxDuration);
+      if (filters.minBudget) queryParams.append('minBudget', filters.minBudget);
+      if (filters.maxBudget) queryParams.append('maxBudget', filters.maxBudget);
+      if (searchTerm) queryParams.append('title', searchTerm);
       
-      if (filters.title) {
-        filteredMovies = filteredMovies.filter(movie => 
-          movie.title.toLowerCase().includes(filters.title.toLowerCase())
-        );
-      }
+      // Chamar a API
+      const apiMovies = await moviesService.getMovies(page, moviesPerPage, filters);
       
-      if (filters.releaseYear) {
-        const year = new Date(filters.releaseYear, 0, 1).getFullYear();
-        filteredMovies = filteredMovies.filter(movie => 
-          new Date(movie.releaseDate).getFullYear() === year
-        );
-      }
-      
-      if (filters.minDuration) {
-        filteredMovies = filteredMovies.filter(movie => 
-          movie.duration >= filters.minDuration
-        );
-      }
-      
-      if (filters.maxDuration) {
-        filteredMovies = filteredMovies.filter(movie => 
-          movie.duration <= filters.maxDuration
-        );
-      }
-      
-      if (filters.minBudget) {
-        filteredMovies = filteredMovies.filter(movie => 
-          movie.budget >= filters.minBudget
-        );
-      }
-      
-      if (filters.maxBudget) {
-        filteredMovies = filteredMovies.filter(movie => 
-          movie.budget <= filters.maxBudget
-        );
-      }
-      
-      if (searchTerm) {
-        filteredMovies = filteredMovies.filter(movie => 
-          movie.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          movie.description.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-      }
-      
-      const startIndex = (page - 1) * moviesPerPage;
-      const endIndex = startIndex + moviesPerPage;
-      const paginatedMovies = filteredMovies.slice(startIndex, endIndex);
-      
-      setMovies(paginatedMovies);
-      setTotalMovies(filteredMovies.length);
+      setMovies(apiMovies);
       setCurrentPage(page);
+      
+      // Se retornou menos filmes que o limite, é a última página
+      if (apiMovies.length < moviesPerPage) {
+        setTotalMovies((page - 1) * moviesPerPage + apiMovies.length);
+      } else {
+        // Se retornou o limite completo, pode haver mais páginas
+        setTotalMovies(page * moviesPerPage + 1);
+      }
       
     } catch (err) {
       setError('Erro ao carregar filmes');
@@ -140,30 +97,10 @@ const MoviesPage: React.FC = () => {
     setIsAddMovieDrawerOpen(false);
   };
 
-  const handleAddMovie = (movieData: any) => {
-    const newId = Math.max(...movies.map(m => m.id), 0) + 1;
-    
-    const newMovie: Movie = {
-      id: newId,
-      title: movieData.title,
-      originalTitle: movieData.title,
-      description: movieData.description,
-      releaseDate: new Date(movieData.releaseYear, 0, 1).toISOString(),
-      duration: movieData.duration,
-      budget: movieData.budget,
-      imageUrl: movieData.imageUrl || "https://via.placeholder.com/300x450?text=Novo+Filme",
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      userId: "current-user-id",
-      user: {
-        id: "current-user-id",
-        email: "user@example.com",
-        name: "Usuário Atual"
-      }
-    };
-    
+  const handleAddMovie = (newMovie: Movie) => {
     setMovies(prev => [newMovie, ...prev]);
     setTotalMovies(prev => prev + 1);
+    setIsAddMovieDrawerOpen(false);
     
     console.log('Filme adicionado:', newMovie);
   };
@@ -240,14 +177,17 @@ const MoviesPage: React.FC = () => {
         <S.MoviesGrid>
           {movies.map((movie) => (
             <S.MovieCard key={movie.id} onClick={() => handleMovieClick(movie.id)}>
-              <S.MovieImage src={movie.imageUrl} alt={movie.title} />
+              <S.MovieImage 
+                src={movie.imageUrl || 'https://via.placeholder.com/300x450?text=Sem+Imagem'} 
+                alt={movie.title} 
+              />
               <S.MovieInfo>
                 <S.MovieTitle>{movie.title}</S.MovieTitle>
                 <S.MovieDescription>{movie.description}</S.MovieDescription>
                 <S.MovieDetails>
                   <S.MovieDetail>Ano: {new Date(movie.releaseDate).getFullYear()}</S.MovieDetail>
                   <S.MovieDetail>Duração: {movie.duration} min</S.MovieDetail>
-                  <S.MovieDetail>Orçamento: ${movie.budget.toLocaleString()}</S.MovieDetail>
+                  <S.MovieDetail>Orçamento: ${(movie.budget || 0).toLocaleString()}</S.MovieDetail>
                 </S.MovieDetails>
               </S.MovieInfo>
             </S.MovieCard>

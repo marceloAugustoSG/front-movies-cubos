@@ -56,7 +56,8 @@ export const ButtonContainer = styled.button<ButtonProps>`
         return `
           background-color: var(--button-secondary-bg);
           color: var(--text-primary);
-          border: 2px solid var(--border-color);
+          border: none;
+          border-radius: 2px;
           padding: 10px 16px;
           
           &:hover {
@@ -495,6 +496,7 @@ export const ButtonContainer = styled.button<ButtonProps>`
         return `
           background-color: var(--button-primary-bg);
           color: var(--color-white);
+          border-radius: 2px;
           padding: 12px 20px;
           
           &:hover {
