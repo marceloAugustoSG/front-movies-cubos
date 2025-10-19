@@ -235,6 +235,29 @@ export const MovieOriginalTitle = styled.p`
   }
 `;
 
+export const MovieTagline = styled.p`
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 120%;
+  letter-spacing: 0px;
+  color: var(--text-secondary);
+  margin: 8px 0 0 0;
+  font-style: italic;
+  
+  @media (max-width: 1024px) {
+    font-size: 16px;
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 13px;
+  }
+`;
+
 export const SecondColumn = styled.div`
   display: flex;
   flex-direction: column;
@@ -508,32 +531,6 @@ export const TaglineAndActions = styled.div`
     flex-direction: column;
     align-items: flex-start;
     gap: 15px;
-  }
-`;
-
-export const MovieTagline = styled.p`
-  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-weight: 400;
-  font-size: 18px;
-  line-height: 1.4;
-  color: var(--text-primary);
-  margin: 39px 16px;
-  font-style: italic;
-  flex: 1;
-  
-  @media (max-width: 768px) {
-    font-size: 16px;
-    margin: 20px 0;
-  }
-  
-  @media (max-width: 480px) {
-    font-size: 14px;
-    margin: 15px 0;
-  }
-  
-  @media (max-width: 753px) {
-    text-align: center;
-    margin: 16px 0;
   }
 `;
 

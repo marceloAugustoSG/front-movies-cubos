@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { Sun, Moon } from 'lucide-react';
@@ -10,7 +10,12 @@ const Header: React.FC = () => {
   const { logout, user } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
   const [isMobile, setIsMobile] = useState(false);
+
+  const isProtectedRoute = ['/dashboard', '/movies'].some(route => 
+    location.pathname.startsWith(route)
+  );
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -43,13 +48,15 @@ const Header: React.FC = () => {
           {theme === 'dark' ? <Sun fill="currentColor" /> : <Moon fill="currentColor" />}
         </S.ThemeToggleButton>
         
-        <Button 
-          variant="logout" 
-          onClick={handleLogout}
-          disabled={!user}
-        >
-          Logout
-        </Button>
+        {isProtectedRoute && (
+          <Button 
+            variant="logout" 
+            onClick={handleLogout}
+            disabled={!user}
+          >
+            Logout
+          </Button>
+        )}
       </S.HeaderActions>
     </S.HeaderContainer>
   );

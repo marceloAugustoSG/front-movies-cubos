@@ -3,6 +3,11 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../../components/Layout';
 import Button from '../../components/Button';
 import InfoBlock from '../../components/InfoBlock';
+import AddMovieDrawer from '../../components/AddMovieDrawer';
+import DeleteConfirmationModal from '../../components/DeleteConfirmationModal';
+import ToastContainer from '../../components/ToastContainer';
+import { useToast } from '../../hooks/useToast';
+import { useAuth } from '../../contexts/AuthContext';
 import { moviesService } from '../../api/moviesService';
 import type { Movie } from '../../types';
 import * as S from './styles.ts';
@@ -13,6 +18,11 @@ const MovieDetailsPage: React.FC = () => {
   const [movie, setMovie] = useState<Movie | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const { toasts, removeToast, showSuccess } = useToast();
+  const { user } = useAuth();
 
   useEffect(() => {
     const loadMovie = async () => {
@@ -25,30 +35,76 @@ const MovieDetailsPage: React.FC = () => {
           return;
         }
         
+        if (!user) {
+          setError('Usuário não autenticado');
+          return;
+        }
+        
         const movieData = await moviesService.getMovieById(parseInt(id));
+        
+        if (movieData.userId !== user.id) {
+          setError('Você não tem permissão para visualizar este filme');
+          return;
+        }
+        
         setMovie(movieData);
         
-      } catch (err: any) {
-        setError(err.message || 'Erro ao carregar filme');
-        console.error('Erro ao carregar filme:', err);
+      } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : 'Erro ao carregar filme';
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }
     };
 
     loadMovie();
-  }, [id]);
+  }, [id, user]);
 
   const handleBackClick = () => {
     navigate('/movies');
   };
 
   const handleEditClick = () => {
-    console.log('Editar filme:', movie?.id);
+    setIsEditDrawerOpen(true);
   };
 
   const handleDeleteClick = () => {
-    console.log('Deletar filme:', movie?.id);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!movie) return;
+    
+    setIsDeleting(true);
+    
+    try {
+      await moviesService.deleteMovie(movie.id);
+      showSuccess('Ação efetuada com sucesso!');
+      setIsDeleteModalOpen(false);
+      
+      setTimeout(() => {
+        navigate('/movies');
+      }, 1500);
+    } catch (error: unknown) {
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleCloseDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+  };
+
+  const handleEditMovie = (updatedMovie: Movie, hasChanges?: boolean) => {
+    setMovie(updatedMovie);
+    setIsEditDrawerOpen(false);
+    if (hasChanges) {
+      showSuccess('Filme atualizado com sucesso!');
+    }
+  };
+
+  const handleCloseEditDrawer = () => {
+    setIsEditDrawerOpen(false);
   };
 
   if (loading) {
@@ -77,12 +133,10 @@ const MovieDetailsPage: React.FC = () => {
   const convertToEmbedUrl = (url: string): string => {
     if (!url) return '';
     
-    // Se já é uma URL de embed, retorna como está
     if (url.includes('youtube.com/embed/')) {
       return url;
     }
     
-    // Converte URL do YouTube para formato embed
     const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
     const match = url.match(youtubeRegex);
     
@@ -90,7 +144,6 @@ const MovieDetailsPage: React.FC = () => {
       return `https://www.youtube.com/embed/${match[1]}`;
     }
     
-    // Se não conseguir converter, retorna a URL original
     return url;
   };
 
@@ -112,6 +165,9 @@ const MovieDetailsPage: React.FC = () => {
             <S.TitleSection className="header-titles">
               <S.MovieTitle>{movie.title}</S.MovieTitle>
               <S.MovieOriginalTitle>Título original: {movie.originalTitle || movie.title}</S.MovieOriginalTitle>
+              {movie.slogan && (
+                <S.MovieTagline>{movie.slogan}</S.MovieTagline>
+              )}
             </S.TitleSection>
             
             <S.ActionButtons className="header-buttons">
@@ -145,6 +201,9 @@ const MovieDetailsPage: React.FC = () => {
               <S.TitleSection className="mobile-titles">
                 <S.MovieTitle>{movie.title}</S.MovieTitle>
                 <S.MovieOriginalTitle>Título original: {movie.originalTitle || movie.title}</S.MovieOriginalTitle>
+                {movie.slogan && (
+                  <S.MovieTagline>{movie.slogan}</S.MovieTagline>
+                )}
               </S.TitleSection>
               
               <S.MobileInfoSection>
@@ -187,7 +246,7 @@ const MovieDetailsPage: React.FC = () => {
             </S.FirstColumn>
             
             <S.SecondColumn>
-              <S.MovieTagline>Todo herói tem um começo.</S.MovieTagline>
+              <S.MovieTagline>{movie.slogan}</S.MovieTagline>
               
               <S.SynopsisSection>
                 <S.SynopsisTitle>SINOPSE</S.SynopsisTitle>
@@ -287,6 +346,24 @@ const MovieDetailsPage: React.FC = () => {
           </S.VideoContainer>
         </S.TrailerSection>
       </S.MovieDetailsContainer>
+      
+      <AddMovieDrawer
+        isOpen={isEditDrawerOpen}
+        onClose={handleCloseEditDrawer}
+        onAddMovie={handleEditMovie}
+        mode="edit"
+        movieToEdit={movie}
+      />
+      
+      <DeleteConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={handleCloseDeleteModal}
+        onConfirm={handleConfirmDelete}
+        movieTitle={movie?.title || ''}
+        isDeleting={isDeleting}
+      />
+      
+      <ToastContainer toasts={toasts} onRemoveToast={removeToast} />
     </Layout>
   );
 };

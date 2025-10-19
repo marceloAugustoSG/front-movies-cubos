@@ -7,6 +7,12 @@ interface LoginRequest {
   password: string;
 }
 
+interface RegisterRequest {
+  name: string;
+  email: string;
+  password: string;
+}
+
 interface LoginResponse {
   user: {
     id: string;
@@ -14,6 +20,32 @@ interface LoginResponse {
     name: string;
   };
   token?: string;
+}
+
+interface RegisterResponse {
+  user: {
+    id: string;
+    email: string;
+    name: string;
+  };
+  token?: string;
+}
+
+interface ForgotPasswordRequest {
+  email: string;
+}
+
+interface ForgotPasswordResponse {
+  message: string;
+}
+
+interface ResetPasswordRequest {
+  token: string;
+  newPassword: string;
+}
+
+interface ResetPasswordResponse {
+  message: string;
 }
 
 interface ApiError {
@@ -52,7 +84,7 @@ class ApiService {
         if (error.response?.status === 401) {
           localStorage.removeItem('token');
           localStorage.removeItem('user');
-          window.location.href = '/login';
+          window.location.href = '/';
         }
         return Promise.reject(error);
       }
@@ -66,14 +98,34 @@ class ApiService {
         credentials
       );
       return response.data;
-    } catch (error: any) {
-      if (error.response) {
-        throw new Error(error.response.data?.message || 'Erro ao fazer login');
-        } else if (error.request) {
-          throw new Error('Erro de conexão com a API');
-        } else {
-          throw new Error('Erro inesperado');
-        }
+    } catch (error: unknown) {
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { data?: { message?: string } } };
+        throw new Error(axiosError.response?.data?.message || 'Erro ao fazer login');
+      } else if (error && typeof error === 'object' && 'request' in error) {
+        throw new Error('Erro de conexão com a API');
+      } else {
+        throw new Error('Erro inesperado');
+      }
+    }
+  }
+
+  async register(credentials: RegisterRequest): Promise<RegisterResponse> {
+    try {
+      const response: AxiosResponse<RegisterResponse> = await this.api.post(
+        API_CONFIG.ENDPOINTS.REGISTER,
+        credentials
+      );
+      return response.data;
+    } catch (error: unknown) {
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { data?: { message?: string } } };
+        throw new Error(axiosError.response?.data?.message || 'Erro ao criar conta');
+      } else if (error && typeof error === 'object' && 'request' in error) {
+        throw new Error('Erro de conexão com a API');
+      } else {
+        throw new Error('Erro inesperado');
+      }
     }
   }
 
@@ -83,10 +135,51 @@ class ApiService {
         API_CONFIG.ENDPOINTS.PROFILE
       );
       return response.data;
-    } catch (error: any) {
-      if (error.response) {
-        throw new Error(error.response.data?.message || 'Erro ao buscar perfil');
-      } else if (error.request) {
+    } catch (error: unknown) {
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { data?: { message?: string } } };
+        throw new Error(axiosError.response?.data?.message || 'Erro ao buscar perfil');
+      } else if (error && typeof error === 'object' && 'request' in error) {
+        throw new Error('Erro de conexão com a API');
+      } else {
+        throw new Error('Erro inesperado');
+      }
+    }
+  }
+
+  async forgotPassword(email: string): Promise<ForgotPasswordResponse> {
+    try {
+      const requestData: ForgotPasswordRequest = { email };
+      const response: AxiosResponse<ForgotPasswordResponse> = await this.api.post(
+        API_CONFIG.ENDPOINTS.FORGOT_PASSWORD,
+        requestData
+      );
+      return response.data;
+    } catch (error: unknown) {
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { data?: { message?: string } } };
+        throw new Error(axiosError.response?.data?.message || 'Erro ao enviar email de recuperação');
+      } else if (error && typeof error === 'object' && 'request' in error) {
+        throw new Error('Erro de conexão com a API');
+      } else {
+        throw new Error('Erro inesperado');
+      }
+    }
+  }
+
+  async resetPassword(token: string, newPassword: string): Promise<ResetPasswordResponse> {
+    try {
+      const requestData: ResetPasswordRequest = { token, newPassword };
+      const response: AxiosResponse<ResetPasswordResponse> = await this.api.post(
+        API_CONFIG.ENDPOINTS.RESET_PASSWORD,
+        requestData
+      );
+      return response.data;
+    } catch (error: unknown) {
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { data?: { message?: string } } };
+        throw new Error(axiosError.response?.data?.message || 'Erro ao redefinir senha');
+      } else if (error && typeof error === 'object' && 'request' in error) {
         throw new Error('Erro de conexão com a API');
       } else {
         throw new Error('Erro inesperado');
@@ -97,8 +190,7 @@ class ApiService {
   async logout(): Promise<void> {
     try {
       await this.api.post(API_CONFIG.ENDPOINTS.LOGOUT);
-    } catch (error: any) {
-      console.warn('Erro no logout:', error.message);
+    } catch (error: unknown) {
     } finally {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
@@ -107,4 +199,4 @@ class ApiService {
 }
 
 export const apiService = new ApiService();
-export type { LoginRequest, LoginResponse, ApiError };
+export type { LoginRequest, RegisterRequest, LoginResponse, RegisterResponse, ForgotPasswordRequest, ForgotPasswordResponse, ResetPasswordRequest, ResetPasswordResponse, ApiError };

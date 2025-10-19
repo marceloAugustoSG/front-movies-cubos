@@ -17,7 +17,7 @@ export const FilterLabel = styled.label`
   font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-weight: 700;
   font-size: 16px;
-  color: var(--text-primary);
+  color: var(--form-label-text);
 `;
 
 export const DurationInputs = styled.div`
@@ -31,6 +31,14 @@ export const DurationSeparator = styled.span`
   font-weight: 400;
   font-size: 14px;
   color: var(--text-secondary);
+`;
+
+export const ErrorMessage = styled.span`
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  color: var(--error-text-alt);
+  margin-top: 4px;
 `;
 
 

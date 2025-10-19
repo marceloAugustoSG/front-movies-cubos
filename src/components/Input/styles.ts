@@ -9,7 +9,12 @@ export const InputContainer = styled.div<InputProps>`
   display: flex;
   align-items: center;
   width: 100%;
-  max-width: ${({ variant }) => variant === 'search' ? '300px' : 'none'};
+  max-width: ${({ variant }) => variant === 'search' ? '488px' : 'none'};
+  
+  @media (min-width: 769px) {
+    width: ${({ variant }) => variant === 'search' ? '488px' : '100%'};
+    max-width: ${({ variant }) => variant === 'search' ? '488px' : 'none'};
+  }
   
   @media (max-width: 768px) {
     max-width: none;

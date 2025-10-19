@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
@@ -12,6 +13,8 @@ const LoginPage: React.FC = () => {
     password: ''
   });
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [loginSuccess, setLoginSuccess] = useState(false);
   const { login, isLoading, user } = useAuth();
   const navigate = useNavigate();
 
@@ -20,6 +23,12 @@ const LoginPage: React.FC = () => {
       navigate('/movies');
     }
   }, [user, navigate]);
+
+  React.useEffect(() => {
+    if (loginSuccess) {
+      navigate('/movies');
+    }
+  }, [loginSuccess, navigate]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -30,13 +39,20 @@ const LoginPage: React.FC = () => {
     if (error) setError('');
   };
 
+  const togglePasswordVisibility = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShowPassword(prev => !prev);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setLoginSuccess(false);
 
     try {
       await login(credentials);
-      navigate('/movies');
+      setLoginSuccess(true);
     } catch (err) {
       setError('Erro ao fazer login. Verifique suas credenciais.');
     }
@@ -61,15 +77,20 @@ const LoginPage: React.FC = () => {
                   
                   <S.InputGroup>
                     <S.Label htmlFor="password">Senha</S.Label>
-                    <Input
-                      type="password"
-                      id="password"
-                      name="password"
-                      value={credentials.password}
-                      onChange={handleInputChange}
-                      placeholder="Digite sua senha"
-                      required
-                    />
+                    <S.PasswordInputContainer>
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        id="password"
+                        name="password"
+                        value={credentials.password}
+                        onChange={handleInputChange}
+                        placeholder="Digite sua senha"
+                        required
+                      />
+                      <S.PasswordToggle type="button" onClick={togglePasswordVisibility}>
+                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                      </S.PasswordToggle>
+                    </S.PasswordInputContainer>
                   </S.InputGroup>
                   
                   <S.BottomRow>

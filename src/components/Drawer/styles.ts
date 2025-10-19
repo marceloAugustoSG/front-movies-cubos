@@ -1,4 +1,4 @@
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 
 export const DrawerBackdrop = styled.div<{ isClosing?: boolean }>`
   position: fixed;
@@ -75,13 +75,13 @@ export const DrawerHeader = styled.div`
 
 export const DrawerTitle = styled.h2`
   font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-weight: 400;
+  font-weight: 700;
   font-style: normal;
   font-size: 24px;
   line-height: 100%;
   letter-spacing: 0px;
   text-align: left;
-  color: #B5B2BC;
+  color: var(--form-label-text);
   margin: 0;
 `;
 

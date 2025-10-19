@@ -10,8 +10,6 @@ export const validateEnv = () => {
   const missingVars = requiredVars.filter(varName => !import.meta.env[varName]);
   
   if (missingVars.length > 0) {
-    console.warn(`⚠️ Variáveis de ambiente ausentes: ${missingVars.join(', ')}`);
-    console.warn('Usando valores padrão para desenvolvimento local');
   }
   
   return {

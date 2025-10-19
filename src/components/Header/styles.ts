@@ -53,8 +53,15 @@ export const Logo = styled.div`
   img {
     height: 40px;
     width: auto;
-    filter: brightness(0) invert(1);
-    transition: height 0.3s ease;
+    transition: height 0.3s ease, filter 0.3s ease;
+    
+    [data-theme="dark"] & {
+      filter: brightness(0) invert(1) !important;
+    }
+    
+    [data-theme="light"] & {
+      filter: brightness(0) !important;
+    }
     
     @media (max-width: 414px) {
       height: 28px;

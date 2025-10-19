@@ -1,15 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Drawer, { useDrawerContext } from '../../components/Drawer';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import Select from '../../components/Select';
+import GenreSelector from '../../components/GenreSelector';
 import { moviesService } from '../../api/moviesService';
-import type { CreateMovieRequest } from '../../types';
+import { emailService } from '../../api/emailService';
+import { uploadService } from '../../api/uploadService';
+import { useAuth } from '../../contexts/AuthContext';
+import { isFutureRelease, shouldSendReminderToday, calculateReminderDelay } from '../../utils/movieReminder';
+import type { CreateMovieRequest, UpdateMovieRequest, Movie } from '../../types';
 import * as S from './styles';
 
 interface MovieData {
   title: string;
   originalTitle?: string;
+  slogan?: string;
   description?: string;
   releaseDate: string;
   duration: number;
@@ -23,12 +29,13 @@ interface MovieData {
   ageRating?: string;
   status?: string;
   language?: string;
-  genres?: string;
+  genres: string[];
 }
 
 interface MovieDataErrors {
   title?: string;
   originalTitle?: string;
+  slogan?: string;
   description?: string;
   releaseDate?: string;
   duration?: string;
@@ -49,7 +56,12 @@ interface MovieDataErrors {
 interface AddMovieDrawerProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddMovie: (movie: any) => void;
+  onAddMovie: (movie: Movie, hasChanges?: boolean) => void;
+  mode?: 'create' | 'edit';
+  movieToEdit?: Movie;
+  onShowSuccess?: (message: string) => void;
+  onShowInfo?: (message: string) => void;
+  onShowError?: (message: string) => void;
 }
 
 const statusOptions = [
@@ -58,14 +70,6 @@ const statusOptions = [
   { value: 'Lançado', label: 'Lançado' },
   { value: 'Adiado', label: 'Adiado' },
   { value: 'Cancelado', label: 'Cancelado' }
-];
-
-const genreOptions = [
-  { value: 'Ação', label: 'Ação' },
-  { value: 'Comédia', label: 'Comédia' },
-  { value: 'Drama', label: 'Drama' },
-  { value: 'Terror', label: 'Terror' },
-  { value: 'Romance', label: 'Romance' }
 ];
 
 const ageRatingOptions = [
@@ -77,10 +81,12 @@ const ageRatingOptions = [
   { value: '18 anos', label: '18 anos' }
 ];
 
-const AddMovieDrawerContent: React.FC<Omit<AddMovieDrawerProps, 'isOpen'>> = ({ onClose, onAddMovie }) => {
+const AddMovieDrawerContent: React.FC<Omit<AddMovieDrawerProps, 'isOpen'>> = ({ onClose, onAddMovie, mode = 'create', movieToEdit, onShowSuccess, onShowInfo, onShowError }) => {
+  const { user } = useAuth();
   const [movieData, setMovieData] = useState<MovieData>({
     title: '',
     originalTitle: '',
+    slogan: '',
     description: '',
     releaseDate: '',
     duration: 1,
@@ -94,23 +100,130 @@ const AddMovieDrawerContent: React.FC<Omit<AddMovieDrawerProps, 'isOpen'>> = ({ 
     ageRating: '',
     status: '',
     language: '',
-    genres: ''
+    genres: []
   });
   const [imagePreview, setImagePreview] = useState<string>('');
   const [errors, setErrors] = useState<MovieDataErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const { onCloseWithAnimation } = useDrawerContext();
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    if (mode === 'edit' && movieToEdit) {
+      setMovieData({
+        title: movieToEdit.title || '',
+        originalTitle: movieToEdit.originalTitle || '',
+        slogan: movieToEdit.slogan || '',
+        description: movieToEdit.description || '',
+        releaseDate: movieToEdit.releaseDate ? new Date(movieToEdit.releaseDate).toISOString().split('T')[0] : '',
+        duration: movieToEdit.duration || 1,
+        budget: movieToEdit.budget || 0,
+        revenue: movieToEdit.revenue || 0,
+        profit: movieToEdit.profit || 0,
+        imageUrl: movieToEdit.imageUrl || '',
+        trailerUrl: movieToEdit.trailerUrl || '',
+        rating: movieToEdit.rating || 0,
+        voteCount: movieToEdit.voteCount || 0,
+        ageRating: movieToEdit.ageRating || '',
+        status: movieToEdit.status || '',
+        language: movieToEdit.language || '',
+        genres: Array.isArray(movieToEdit.genres) 
+          ? movieToEdit.genres 
+          : movieToEdit.genres 
+            ? movieToEdit.genres.split(',').map(g => g.trim()).filter(g => g)
+            : []
+      });
+      
+      if (movieToEdit.imageUrl) {
+        setImagePreview(movieToEdit.imageUrl);
+      }
+    } else {
+      setMovieData({
+        title: '',
+        originalTitle: '',
+        slogan: '',
+        description: '',
+        releaseDate: '',
+        duration: 1,
+        budget: 0,
+        revenue: 0,
+        profit: 0,
+        imageUrl: '',
+        trailerUrl: '',
+        rating: 0,
+        voteCount: 0,
+        ageRating: '',
+        status: '',
+        language: '',
+        genres: []
+      });
+      setImagePreview('');
+    }
+  }, [mode, movieToEdit]);
+
+  const hasChanges = () => {
+    if (mode !== 'edit' || !movieToEdit) return true;
+    
+    const originalData = {
+      title: movieToEdit.title || '',
+      originalTitle: movieToEdit.originalTitle || '',
+      slogan: movieToEdit.slogan || '',
+      description: movieToEdit.description || '',
+      releaseDate: movieToEdit.releaseDate ? new Date(movieToEdit.releaseDate).toISOString().split('T')[0] : '',
+      duration: movieToEdit.duration || 1,
+      budget: movieToEdit.budget || 0,
+      revenue: movieToEdit.revenue || 0,
+      profit: movieToEdit.profit || 0,
+      imageUrl: movieToEdit.imageUrl || '',
+      trailerUrl: movieToEdit.trailerUrl || '',
+      rating: movieToEdit.rating || 0,
+      voteCount: movieToEdit.voteCount || 0,
+      ageRating: movieToEdit.ageRating || '',
+      status: movieToEdit.status || '',
+      language: movieToEdit.language || '',
+      genres: movieToEdit.genres || ''
+    };
+
+    return JSON.stringify(originalData) !== JSON.stringify(movieData);
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file && file.type.startsWith('image/')) {
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      onShowError?.('Por favor, selecione apenas arquivos de imagem');
+      return;
+    }
+
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      onShowError?.('A imagem deve ter no máximo 5MB');
+      return;
+    }
+
+    try {
+      setIsUploadingImage(true);
+      
       const reader = new FileReader();
       reader.onload = (e) => {
         const result = e.target?.result as string;
         setImagePreview(result);
-        setMovieData(prev => ({ ...prev, imageUrl: result }));
       };
       reader.readAsDataURL(file);
+      
+      const uploadedUrl = await uploadService.uploadImage(file);
+      
+      setMovieData(prev => ({ ...prev, imageUrl: uploadedUrl }));
+      
+      onShowSuccess?.('Imagem enviada com sucesso!');
+      
+    } catch (error) {
+      onShowError?.(error instanceof Error ? error.message : 'Erro ao fazer upload da imagem');
+      
+      setImagePreview('');
+    } finally {
+      setIsUploadingImage(false);
     }
   };
 
@@ -147,7 +260,11 @@ const AddMovieDrawerContent: React.FC<Omit<AddMovieDrawerProps, 'isOpen'>> = ({ 
     
         if (movieData.imageUrl && movieData.imageUrl.trim() && !movieData.imageUrl.startsWith('data:')) {
           const urlPattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
-          if (!urlPattern.test(movieData.imageUrl)) {
+          const isDataUrl = movieData.imageUrl.startsWith('data:');
+          const isHttpUrl = movieData.imageUrl.startsWith('http://') || movieData.imageUrl.startsWith('https://');
+          const isRelativeUrl = movieData.imageUrl.startsWith('/');
+          
+          if (!isDataUrl && !isHttpUrl && !isRelativeUrl && !urlPattern.test(movieData.imageUrl)) {
             newErrors.imageUrl = 'URL inválida';
           }
         }
@@ -172,12 +289,12 @@ const AddMovieDrawerContent: React.FC<Omit<AddMovieDrawerProps, 'isOpen'>> = ({ 
         setIsSubmitting(true);
         
         try {
-          // Preparar dados para envio (remover base64 se existir)
           const dataToSend: CreateMovieRequest = {
             title: movieData.title,
             originalTitle: movieData.originalTitle,
+            slogan: movieData.slogan,
             description: movieData.description,
-            releaseDate: movieData.releaseDate,
+            releaseDate: movieData.releaseDate ? new Date(movieData.releaseDate).toISOString() : '',
             duration: movieData.duration,
             budget: movieData.budget,
             revenue: movieData.revenue,
@@ -189,19 +306,172 @@ const AddMovieDrawerContent: React.FC<Omit<AddMovieDrawerProps, 'isOpen'>> = ({ 
             ageRating: movieData.ageRating,
             status: movieData.status,
             language: movieData.language,
-            genres: movieData.genres ? [movieData.genres] : [],
+            genres: movieData.genres,
             userId: (() => {
               const user = localStorage.getItem('user');
               return user ? JSON.parse(user).id : '';
             })()
           };
           
-          const createdMovie = await moviesService.createMovie(dataToSend);
-          onAddMovie(createdMovie);
+          if (mode === 'edit' && movieToEdit) {
+            const updateData: UpdateMovieRequest = {
+              title: movieData.title,
+              originalTitle: movieData.originalTitle,
+              slogan: movieData.slogan,
+              description: movieData.description,
+              releaseDate: movieData.releaseDate ? new Date(movieData.releaseDate).toISOString() : '',
+              duration: movieData.duration,
+              budget: movieData.budget,
+              revenue: movieData.revenue,
+              profit: movieData.profit,
+              imageUrl: movieData.imageUrl,
+              trailerUrl: movieData.trailerUrl,
+              rating: movieData.rating,
+              voteCount: movieData.voteCount,
+              ageRating: movieData.ageRating,
+              status: movieData.status,
+              language: movieData.language,
+              genres: movieData.genres
+            };
+            
+            const updatedMovie = await moviesService.updateMovie(movieToEdit.id, updateData);
+            
+            if (user?.email && isFutureRelease(movieData.releaseDate)) {
+              try {
+                const delay = calculateReminderDelay(movieData.releaseDate);
+
+                if (shouldSendReminderToday(movieData.releaseDate)) {
+                  await emailService.sendMovieReminderEmail(
+                    user.email,
+                    movieData.title,
+                    movieData.releaseDate,
+                    movieData.imageUrl
+                  );
+                  onShowSuccess?.('📧 Email de lembrete enviado! Você receberá uma notificação sobre a estreia de hoje.');
+                } else if (delay > 0) {
+                  setTimeout(async () => {
+                    try {
+                      await emailService.sendMovieReminderEmail(
+                        user.email!,
+                        movieData.title,
+                        movieData.releaseDate,
+                        movieData.imageUrl
+                      );
+                    } catch (error) {
+                      onShowError?.('Erro ao enviar email de lembrete');
+                    }
+                  }, delay);
+
+                  const today = new Date();
+                  let releaseDate: Date;
+                  if (movieData.releaseDate.includes('-') && movieData.releaseDate.length === 10) {
+                    const [year, month, day] = movieData.releaseDate.split('-').map(Number);
+                    releaseDate = new Date(year, month - 1, day);
+                  } else {
+                    releaseDate = new Date(movieData.releaseDate);
+                  }
+
+                  const todayStr = today.toLocaleDateString('pt-BR');
+                  const releaseDateStr = releaseDate.toLocaleDateString('pt-BR');
+                  const todayLocal = new Date(todayStr.split('/').reverse().join('-'));
+                  const releaseDateLocal = new Date(releaseDateStr.split('/').reverse().join('-'));
+
+                  const daysUntilRelease = Math.ceil((releaseDateLocal.getTime() - todayLocal.getTime()) / (1000 * 3600 * 24));
+
+                  let dayText = '';
+                  if (daysUntilRelease === 1) {
+                    dayText = 'amanhã';
+                  } else if (daysUntilRelease === 2) {
+                    dayText = 'depois de amanhã';
+                  } else {
+                    dayText = `em ${daysUntilRelease} dias`;
+                  }
+
+                  onShowInfo?.(`📅 Lembrete agendado! Você receberá um email ${dayText} sobre a estreia de "${movieData.title}".`);
+                }
+              } catch (error) {
+                onShowError?.('⚠️ Não foi possível agendar o lembrete por email, mas o filme foi atualizado com sucesso.');
+              }
+            }
+
+            if (!user?.email || !isFutureRelease(movieData.releaseDate)) {
+              onShowSuccess?.('Filme atualizado com sucesso!');
+            }
+            
+            onAddMovie(updatedMovie, hasChanges());
+          } else {
+            const createdMovie = await moviesService.createMovie(dataToSend);
+            
+            if (user?.email && isFutureRelease(movieData.releaseDate)) {
+              try {
+                const delay = calculateReminderDelay(movieData.releaseDate);
+                
+                if (shouldSendReminderToday(movieData.releaseDate)) {
+                  await emailService.sendMovieReminderEmail(
+                    user.email,
+                    movieData.title,
+                    movieData.releaseDate,
+                    movieData.imageUrl
+                  );
+                  onShowSuccess?.('📧 Email de lembrete enviado! Você receberá uma notificação sobre a estreia de hoje.');
+                } else if (delay > 0) {
+                  setTimeout(async () => {
+                    try {
+                      await emailService.sendMovieReminderEmail(
+                        user.email!,
+                        movieData.title,
+                        movieData.releaseDate,
+                        movieData.imageUrl
+                      );
+                    } catch (error) {
+                      onShowError?.('Erro ao enviar email de lembrete');
+                    }
+                  }, delay);
+                  
+                  const today = new Date();
+                  
+                  let releaseDate: Date;
+                  if (movieData.releaseDate.includes('-') && movieData.releaseDate.length === 10) {
+                    const [year, month, day] = movieData.releaseDate.split('-').map(Number);
+                      releaseDate = new Date(year, month - 1, day);
+                  } else {
+                    releaseDate = new Date(movieData.releaseDate);
+                  }
+                  
+                  const todayStr = today.toLocaleDateString('pt-BR');
+                  const releaseDateStr = releaseDate.toLocaleDateString('pt-BR');
+                  const todayLocal = new Date(todayStr.split('/').reverse().join('-'));
+                  const releaseDateLocal = new Date(releaseDateStr.split('/').reverse().join('-'));
+                  
+                  const daysUntilRelease = Math.ceil((releaseDateLocal.getTime() - todayLocal.getTime()) / (1000 * 3600 * 24));
+                  
+                  let dayText = '';
+                  if (daysUntilRelease === 1) {
+                    dayText = 'amanhã';
+                  } else if (daysUntilRelease === 2) {
+                    dayText = 'depois de amanhã';
+                  } else {
+                    dayText = `em ${daysUntilRelease} dias`;
+                  }
+                  
+                  onShowInfo?.(`📅 Lembrete agendado! Você receberá um email ${dayText} sobre a estreia de "${movieData.title}".`);
+                }
+              } catch (error) {
+                onShowError?.('⚠️ Não foi possível agendar o lembrete por email, mas o filme foi criado com sucesso.');
+              }
+            }
+            
+            if (!user?.email || !isFutureRelease(movieData.releaseDate)) {
+              onShowSuccess?.('Filme adicionado com sucesso!');
+            }
+            
+            onAddMovie(createdMovie);
+          }
+          
           onClose();
-        } catch (error: any) {
-          console.error('Erro ao adicionar filme:', error);
-          setErrors({ general: error.message || 'Erro ao adicionar filme' });
+        } catch (error: unknown) {
+          const errorMessage = error instanceof Error ? error.message : 'Erro ao adicionar filme';
+          setErrors({ general: errorMessage });
         } finally {
           setIsSubmitting(false);
         }
@@ -211,6 +481,7 @@ const AddMovieDrawerContent: React.FC<Omit<AddMovieDrawerProps, 'isOpen'>> = ({ 
     setMovieData({
       title: '',
       originalTitle: '',
+      slogan: '',
       description: '',
       releaseDate: '',
       duration: 1,
@@ -223,9 +494,10 @@ const AddMovieDrawerContent: React.FC<Omit<AddMovieDrawerProps, 'isOpen'>> = ({ 
       ageRating: '',
       status: '',
       language: '',
-      genres: ''
+      genres: []
     });
     setImagePreview('');
+    setIsUploadingImage(false);
     setErrors({});
     onCloseWithAnimation();
   };
@@ -264,6 +536,20 @@ const AddMovieDrawerContent: React.FC<Omit<AddMovieDrawerProps, 'isOpen'>> = ({ 
                 }}
               />
               {errors.originalTitle && <S.ErrorMessage>{errors.originalTitle}</S.ErrorMessage>}
+            </S.FormSection>
+
+            <S.FormSection>
+              <S.FormLabel>Slogan</S.FormLabel>
+              <Input
+                type="text"
+                placeholder="Digite o slogan do filme"
+                value={movieData.slogan}
+                onChange={(e) => {
+                  setMovieData(prev => ({ ...prev, slogan: e.target.value }));
+                  if (errors.slogan) setErrors(prev => ({ ...prev, slogan: undefined }));
+                }}
+              />
+              {errors.slogan && <S.ErrorMessage>{errors.slogan}</S.ErrorMessage>}
             </S.FormSection>
 
             <S.FormSection>
@@ -422,16 +708,14 @@ const AddMovieDrawerContent: React.FC<Omit<AddMovieDrawerProps, 'isOpen'>> = ({ 
             </S.FormSection>
 
             <S.FormSection>
-              <S.FormLabel>Gêneros</S.FormLabel>
-              <Select
-                value={movieData.genres}
-                onChange={(e) => {
-                  setMovieData(prev => ({ ...prev, genres: e.target.value }));
+              <GenreSelector
+                genres={movieData.genres}
+                onChange={(genres) => {
+                  setMovieData(prev => ({ ...prev, genres }));
                   if (errors.genres) setErrors(prev => ({ ...prev, genres: undefined }));
                 }}
-                options={genreOptions}
-                placeholder="Selecione o gênero"
-                name="genres"
+                placeholder="Digite um gênero"
+                disabled={isSubmitting}
               />
               {errors.genres && <S.ErrorMessage>{errors.genres}</S.ErrorMessage>}
             </S.FormSection>
@@ -442,21 +726,24 @@ const AddMovieDrawerContent: React.FC<Omit<AddMovieDrawerProps, 'isOpen'>> = ({ 
                 <Input
                   type="url"
                   placeholder="https://exemplo.com/imagem.jpg (opcional)"
-                  value={movieData.imageUrl?.startsWith('data:') ? '' : movieData.imageUrl || ''}
+                  value={movieData.imageUrl || ''}
                   onChange={(e) => {
                     setMovieData(prev => ({ ...prev, imageUrl: e.target.value }));
                     if (errors.imageUrl) setErrors(prev => ({ ...prev, imageUrl: undefined }));
-                    setImagePreview('');
+                    if (!e.target.value.startsWith('data:')) {
+                      setImagePreview('');
+                    }
                   }}
                 />
-                <S.UploadButton>
+                <S.UploadButton $disabled={isUploadingImage}>
                   <S.FileInput
                     type="file"
                     accept="image/*"
                     onChange={handleFileUpload}
+                    disabled={isUploadingImage}
                   />
                   <S.UploadLabel>
-                    📁 Upload
+                    {isUploadingImage ? '⏳ Enviando...' : '📁 Upload'}
                   </S.UploadLabel>
                 </S.UploadButton>
               </S.ImageInputContainer>
@@ -509,17 +796,22 @@ const AddMovieDrawerContent: React.FC<Omit<AddMovieDrawerProps, 'isOpen'>> = ({ 
           Cancelar
         </Button>
         <Button variant="drawer-add" onClick={handleAdd} disabled={isSubmitting}>
-          {isSubmitting ? 'Adicionando...' : 'Adicionar Filme'}
+          {isSubmitting 
+            ? (mode === 'edit' ? 'Salvando...' : 'Adicionando...') 
+            : (mode === 'edit' ? 'Salvar Alterações' : 'Adicionar Filme')
+          }
         </Button>
       </S.DrawerActions>
     </>
   );
 };
 
-const AddMovieDrawer: React.FC<AddMovieDrawerProps> = ({ isOpen, onClose, onAddMovie }) => {
+const AddMovieDrawer: React.FC<AddMovieDrawerProps> = ({ isOpen, onClose, onAddMovie, mode = 'create', movieToEdit, onShowSuccess, onShowInfo, onShowError }) => {
+  const title = mode === 'edit' ? 'Editar filme' : 'Adicionar filme';
+  
   return (
-    <Drawer isOpen={isOpen} onClose={onClose} title="Adicionar filme">
-      <AddMovieDrawerContent onClose={onClose} onAddMovie={onAddMovie} />
+    <Drawer isOpen={isOpen} onClose={onClose} title={title}>
+      <AddMovieDrawerContent onClose={onClose} onAddMovie={onAddMovie} mode={mode} movieToEdit={movieToEdit} onShowSuccess={onShowSuccess} onShowInfo={onShowInfo} onShowError={onShowError} />
     </Drawer>
   );
 };

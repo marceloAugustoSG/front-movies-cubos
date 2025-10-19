@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from 'react';
 import type { ReactNode } from 'react';
-import type { User, LoginCredentials, AuthContextType } from '../types';
+import type { User, LoginCredentials, RegisterRequest, AuthContextType } from '../types';
 import { apiService } from '../api/authService';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -38,6 +38,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const register = async (credentials: RegisterRequest): Promise<void> => {
+    setIsLoading(true);
+    
+    try {
+      const response = await apiService.register(credentials);
+      
+      setUser(response.user);
+      localStorage.setItem('user', JSON.stringify(response.user));
+      
+      if (response.token) {
+        localStorage.setItem('token', response.token);
+      }
+      
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao criar conta';
+      throw new Error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
@@ -46,7 +67,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   React.useEffect(() => {
     const savedUser = localStorage.getItem('user');
-    if (savedUser) {
+    const savedToken = localStorage.getItem('token');
+    
+    if (savedUser && savedToken) {
       try {
         const parsedUser = JSON.parse(savedUser);
         setUser(parsedUser);
@@ -61,6 +84,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const value: AuthContextType = {
     user,
     login,
+    register,
     logout,
     isLoading: isLoading || !isInitialized
   };

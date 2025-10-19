@@ -16,7 +16,7 @@ export const InfoBlockTitle = styled.h3`
   line-height: 100%;
   letter-spacing: 0px;
   text-transform: uppercase;
-  color: #B5B2BC;
+  color: var(--info-block-label);
   margin: 0;
 `;
 
@@ -26,6 +26,6 @@ export const InfoBlockValue = styled.div`
   font-size: 14px;
   line-height: 100%;
   letter-spacing: 0px;
-  color: #EEEEF0;
+  color: var(--info-block-value);
   margin: 0;
 `;

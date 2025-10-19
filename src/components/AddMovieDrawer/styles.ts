@@ -24,7 +24,7 @@ export const FormLabel = styled.label`
   font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-weight: 700;
   font-size: 16px;
-  color: var(--text-primary);
+  color: var(--form-label-text);
 `;
 
 export const TextArea = styled.textarea`
@@ -75,7 +75,7 @@ export const DrawerActions = styled.div`
 `;
 
 export const ErrorMessage = styled.div`
-  color: #ff6b6b;
+  color: var(--error-text-color);
   font-size: 12px;
   margin-top: 4px;
   font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -102,17 +102,18 @@ export const ImageInputContainer = styled.div`
   align-items: flex-start;
 `;
 
-export const UploadButton = styled.div`
+export const UploadButton = styled.div<{ $disabled?: boolean }>`
   position: relative;
   flex-shrink: 0;
+  opacity: ${props => props.$disabled ? 0.6 : 1};
 `;
 
-export const FileInput = styled.input`
+export const FileInput = styled.input<{ disabled?: boolean }>`
   position: absolute;
   opacity: 0;
   width: 100%;
   height: 100%;
-  cursor: pointer;
+  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
 `;
 
 export const UploadLabel = styled.div`

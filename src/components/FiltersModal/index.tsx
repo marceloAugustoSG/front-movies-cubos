@@ -4,13 +4,17 @@ import Button from '../../components/Button';
 import Input from '../../components/Input';
 import * as S from './styles';
 
-interface MovieFilters {
+export interface MovieFilters {
   title?: string;
   releaseYear?: number;
+  releaseDateFrom?: string;
+  releaseDateTo?: string;
   minDuration?: number;
   maxDuration?: number;
   minBudget?: number;
   maxBudget?: number;
+  userId?: string;
+  genre?: string;
 }
 
 interface FiltersModalProps {
@@ -21,9 +25,22 @@ interface FiltersModalProps {
 
 const FiltersModalContent: React.FC<Omit<FiltersModalProps, 'isOpen'>> = ({ onClose, onApplyFilters }) => {
   const [filters, setFilters] = useState<MovieFilters>({});
+  const [dateError, setDateError] = useState<string>('');
   const { onCloseWithAnimation } = useModalContext();
 
+  const validateDates = (fromDate?: string, toDate?: string) => {
+    if (fromDate && toDate && new Date(fromDate) > new Date(toDate)) {
+      setDateError('A data de início deve ser anterior à data de fim');
+      return false;
+    }
+    setDateError('');
+    return true;
+  };
+
   const handleApply = () => {
+    if (!validateDates(filters.releaseDateFrom, filters.releaseDateTo)) {
+      return;
+    }
     onApplyFilters(filters);
     onClose();
   };
@@ -49,20 +66,50 @@ const FiltersModalContent: React.FC<Omit<FiltersModalProps, 'isOpen'>> = ({ onCl
         </S.FilterSection>
 
         <S.FilterSection>
-          <S.FilterLabel>Ano de Lançamento</S.FilterLabel>
+          <S.FilterLabel>Gênero</S.FilterLabel>
           <Input
             type="text"
-            inputMode="numeric"
-            pattern="[0-9]*"
-            placeholder="Ex: 2023"
-            min="1900"
-            max="2030"
-            value={filters.releaseYear !== undefined ? String(filters.releaseYear) : ''}
+            placeholder="Ex: Ação, Comédia, Drama"
+            value={filters.genre || ''}
             onChange={(e) => setFilters(prev => ({
               ...prev,
-              releaseYear: e.target.value ? parseInt(e.target.value) : undefined
+              genre: e.target.value || undefined
             }))}
           />
+        </S.FilterSection>
+
+        <S.FilterSection>
+          <S.FilterLabel>Período de Lançamento</S.FilterLabel>
+          <S.DurationInputs>
+            <Input
+              type="date"
+              placeholder="Data de início"
+              value={filters.releaseDateFrom || ''}
+              onChange={(e) => {
+                const newFromDate = e.target.value || undefined;
+                setFilters(prev => ({
+                  ...prev,
+                  releaseDateFrom: newFromDate
+                }));
+                validateDates(newFromDate, filters.releaseDateTo);
+              }}
+            />
+            <S.DurationSeparator>até</S.DurationSeparator>
+            <Input
+              type="date"
+              placeholder="Data de fim"
+              value={filters.releaseDateTo || ''}
+              onChange={(e) => {
+                const newToDate = e.target.value || undefined;
+                setFilters(prev => ({
+                  ...prev,
+                  releaseDateTo: newToDate
+                }));
+                validateDates(filters.releaseDateFrom, newToDate);
+              }}
+            />
+          </S.DurationInputs>
+          {dateError && <span style={{color: '#ff4444', fontSize: '12px', marginTop: '4px'}}>{dateError}</span>}
         </S.FilterSection>
 
         <S.FilterSection>

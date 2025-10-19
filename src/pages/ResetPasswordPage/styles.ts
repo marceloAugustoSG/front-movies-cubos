@@ -76,30 +76,6 @@ export const Label = styled.label`
   color: #ffffff;
 `;
 
-export const PasswordInputContainer = styled.div`
-  position: relative;
-  display: flex;
-  align-items: center;
-`;
-
-export const PasswordToggle = styled.button`
-  position: absolute;
-  right: 12px;
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  cursor: pointer;
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: color 0.2s ease;
-  
-  &:hover {
-    color: var(--text-primary);
-  }
-`;
-
 export const BottomRow = styled.div`
   display: flex;
   justify-content: space-between;
@@ -122,18 +98,71 @@ export const ForgotPasswordLink = styled.div`
   }
 `;
 
-export const FullWidthButton = styled.div`
-  width: 50%;
-  
-  button {
-    width: 100%;
-  }
-`;
-
 export const ErrorMessage = styled.div`
   font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-weight: 400;
   font-size: 14px;
   color: #ff4444;
   margin-top: 8px;
+`;
+
+export const Container = styled.div`
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--background-color);
+  padding: 20px;
+`;
+
+export const Card = styled.div`
+  background: var(--card-background);
+  border-radius: 8px;
+  padding: 40px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+`;
+
+export const SuccessIcon = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+  color: var(--success-color);
+`;
+
+export const ErrorIcon = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+  color: var(--error-text);
+`;
+
+export const Title = styled.h1`
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 16px 0;
+  text-align: center;
+`;
+
+export const Message = styled.p`
+  font-size: 16px;
+  color: var(--text-primary);
+  margin: 0 0 16px 0;
+  text-align: center;
+  line-height: 1.5;
+`;
+
+export const Instructions = styled.p`
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0 0 32px 0;
+  text-align: center;
+  line-height: 1.5;
+`;
+
+export const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
 `;

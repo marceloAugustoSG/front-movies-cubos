@@ -1,10 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search } from 'lucide-react';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
-import FiltersModal from '../../components/FiltersModal';
+import FiltersModal, { type MovieFilters } from '../../components/FiltersModal';
 import AddMovieDrawer from '../../components/AddMovieDrawer';
+import ToastContainer from '../../components/ToastContainer';
+import CircleProgress from '../../components/CircleProgress';
+import { useToast } from '../../hooks/useToast';
+import { useAuth } from '../../contexts/AuthContext';
 import { moviesService } from '../../api/moviesService';
 import type { Movie } from '../../types';
 import * as S from './styles';
@@ -16,66 +20,54 @@ const MoviesPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
   const [isAddMovieDrawerOpen, setIsAddMovieDrawerOpen] = useState(false);
-  const [appliedFilters, setAppliedFilters] = useState<any>({});
+  const [appliedFilters, setAppliedFilters] = useState<MovieFilters>({});
+  const { toasts, removeToast, showSuccess, showInfo, showError } = useToast();
+  const { user } = useAuth();
   
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalMovies, setTotalMovies] = useState(1);
-  const moviesPerPage = 14;
+  const [totalMovies, setTotalMovies] = useState(0);
+  const moviesPerPage = 10;
   const totalPages = Math.ceil(totalMovies / moviesPerPage);
+  
+  const hasInitialized = useRef(false);
   
   const navigate = useNavigate();
 
 
-  const loadMovies = async (page: number = currentPage, filters: any = appliedFilters) => {
+  const loadMovies = async (page: number = currentPage, filters: MovieFilters = appliedFilters, searchTitle?: string) => {
     try {
       setLoading(true);
       setError('');
       
-      // Construir parâmetros de query para a API
-      const queryParams = new URLSearchParams();
-      queryParams.append('page', page.toString());
-      queryParams.append('limit', moviesPerPage.toString());
-      
-      // Adicionar filtros se existirem
-      if (filters.title) queryParams.append('title', filters.title);
-      if (filters.releaseYear) queryParams.append('releaseYear', filters.releaseYear);
-      if (filters.minDuration) queryParams.append('minDuration', filters.minDuration);
-      if (filters.maxDuration) queryParams.append('maxDuration', filters.maxDuration);
-      if (filters.minBudget) queryParams.append('minBudget', filters.minBudget);
-      if (filters.maxBudget) queryParams.append('maxBudget', filters.maxBudget);
-      if (searchTerm) queryParams.append('title', searchTerm);
-      
-      // Chamar a API
-      const apiMovies = await moviesService.getMovies(page, moviesPerPage, filters);
-      
-      setMovies(apiMovies);
-      setCurrentPage(page);
-      
-      // Se retornou menos filmes que o limite, é a última página
-      if (apiMovies.length < moviesPerPage) {
-        setTotalMovies((page - 1) * moviesPerPage + apiMovies.length);
-      } else {
-        // Se retornou o limite completo, pode haver mais páginas
-        setTotalMovies(page * moviesPerPage + 1);
+      if (!user) {
+        setError('Usuário não autenticado');
+        return;
       }
+      
+      const searchFilters = {
+        ...filters,
+        title: searchTitle || searchTerm.trim() || filters.title,
+        userId: user.id
+      };
+      
+      const apiResponse = await moviesService.getMovies(page, moviesPerPage, searchFilters);
+      
+      setMovies(apiResponse.movies);
+      setCurrentPage(page);
+      setTotalMovies(apiResponse.pagination.total);
       
     } catch (err) {
       setError('Erro ao carregar filmes');
-      console.error('Erro ao carregar filmes:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    loadMovies();
-  }, []);
-
   const handleMovieClick = (movieId: number) => {
     navigate(`/movies/${movieId}`);
   };
 
-  const handleApplyFilters = (filters: any) => {
+  const handleApplyFilters = (filters: MovieFilters) => {
     setAppliedFilters(filters);
     setIsFiltersModalOpen(false);
     loadMovies(1, filters);
@@ -101,8 +93,6 @@ const MoviesPage: React.FC = () => {
     setMovies(prev => [newMovie, ...prev]);
     setTotalMovies(prev => prev + 1);
     setIsAddMovieDrawerOpen(false);
-    
-    console.log('Filme adicionado:', newMovie);
   };
 
   const handlePageChange = (page: number) => {
@@ -128,28 +118,23 @@ const MoviesPage: React.FC = () => {
   };
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
+    if (!hasInitialized.current) {
       loadMovies(1);
-    }, 300);
+      hasInitialized.current = true;
+    }
+  }, []);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (searchTerm.trim() !== '') {
+        loadMovies(1, appliedFilters, searchTerm.trim());
+      } else {
+        loadMovies(1, appliedFilters);
+      }
+    }, searchTerm.trim() === '' ? 0 : 500);
 
     return () => clearTimeout(timeoutId);
-  }, [searchTerm]);
-
-  if (loading) {
-    return (
-      <S.MoviesContainer>
-        <S.LoadingMessage>Carregando filmes...</S.LoadingMessage>
-      </S.MoviesContainer>
-    );
-  }
-
-  if (error) {
-    return (
-      <S.MoviesContainer>
-        <S.ErrorMessage>{error}</S.ErrorMessage>
-      </S.MoviesContainer>
-    );
-  }
+  }, [searchTerm, appliedFilters]);
 
   return (
     <S.MoviesContainer>
@@ -160,6 +145,7 @@ const MoviesPage: React.FC = () => {
             placeholder="Buscar filmes..."
             value={searchTerm}
             onChange={handleSearchChange}
+            variant="search"
             icon={<Search size={16} fill="currentColor" />}
           />
           <S.ButtonsRow>
@@ -174,28 +160,65 @@ const MoviesPage: React.FC = () => {
       </S.ControlBar>
 
       <S.MoviesContent>
-        <S.MoviesGrid>
+        {loading && (
+          <S.LoadingMessage>Carregando filmes...</S.LoadingMessage>
+        )}
+        
+        {error && (
+          <S.ErrorMessage>{error}</S.ErrorMessage>
+        )}
+        
+        {!loading && !error && movies.length === 0 && (
+          <S.EmptyState>
+            <S.EmptyIcon>🎬</S.EmptyIcon>
+            <S.EmptyTitle>Nenhum filme encontrado</S.EmptyTitle>
+            <S.EmptyMessage>
+              {searchTerm.trim() || Object.values(appliedFilters).some(value => value !== undefined && value !== '') 
+                ? 'Tente ajustar os filtros ou termo de busca para encontrar mais filmes.'
+                : 'Não há filmes cadastrados no momento.'
+              }
+            </S.EmptyMessage>
+            {(!searchTerm.trim() && !Object.values(appliedFilters).some(value => value !== undefined && value !== '')) && (
+              <S.EmptyAction>
+              
+              </S.EmptyAction>
+            )}
+          </S.EmptyState>
+        )}
+        
+        {!loading && !error && movies.length > 0 && (
+          <S.MoviesGrid>
           {movies.map((movie) => (
-            <S.MovieCard key={movie.id} onClick={() => handleMovieClick(movie.id)}>
+            <S.MovieCard key={movie.id} className="movie-card" onClick={() => handleMovieClick(movie.id)}>
               <S.MovieImage 
                 src={movie.imageUrl || 'https://via.placeholder.com/300x450?text=Sem+Imagem'} 
                 alt={movie.title} 
               />
-              <S.MovieInfo>
-                <S.MovieTitle>{movie.title}</S.MovieTitle>
-                <S.MovieDescription>{movie.description}</S.MovieDescription>
-                <S.MovieDetails>
-                  <S.MovieDetail>Ano: {new Date(movie.releaseDate).getFullYear()}</S.MovieDetail>
-                  <S.MovieDetail>Duração: {movie.duration} min</S.MovieDetail>
-                  <S.MovieDetail>Orçamento: ${(movie.budget || 0).toLocaleString()}</S.MovieDetail>
-                </S.MovieDetails>
-              </S.MovieInfo>
+              <S.MovieOverlay>
+                <S.MovieTitle>{movie.originalTitle || movie.title}</S.MovieTitle>
+                <S.HoverGenres>
+                  {movie.genres 
+                    ? Array.isArray(movie.genres) 
+                      ? movie.genres.map(genre => 
+                          genre.trim().charAt(0).toUpperCase() + genre.trim().slice(1).toLowerCase()
+                        ).join(', ')
+                      : movie.genres.split(',').map(genre => 
+                          genre.trim().charAt(0).toUpperCase() + genre.trim().slice(1).toLowerCase()
+                        ).join(', ')
+                    : 'Sem gênero'
+                  }
+                </S.HoverGenres>
+              </S.MovieOverlay>
+              <S.HoverOverlay>
+                <CircleProgress rating={movie.rating || 67} size={120} />
+              </S.HoverOverlay>
             </S.MovieCard>
           ))}
-        </S.MoviesGrid>
+          </S.MoviesGrid>
+        )}
       </S.MoviesContent>
 
-      {totalPages > 1 && (
+      {totalPages > 1 && movies.length > 0 && (
         <S.PaginationContainer>
           <Button 
             variant="pagination-arrow" 
@@ -229,6 +252,9 @@ const MoviesPage: React.FC = () => {
         isOpen={isAddMovieDrawerOpen}
         onClose={handleCloseAddMovie}
         onAddMovie={handleAddMovie}
+        onShowSuccess={showSuccess}
+        onShowInfo={showInfo}
+        onShowError={showError}
       />
       
       <FiltersModal
@@ -236,6 +262,8 @@ const MoviesPage: React.FC = () => {
         onClose={handleCloseFilters}
         onApplyFilters={handleApplyFilters}
       />
+      
+      <ToastContainer toasts={toasts} onRemoveToast={removeToast} />
     </S.MoviesContainer>
   );
 };
