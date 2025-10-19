@@ -165,9 +165,6 @@ const MovieDetailsPage: React.FC = () => {
             <S.TitleSection className="header-titles">
               <S.MovieTitle>{movie.title}</S.MovieTitle>
               <S.MovieOriginalTitle>Título original: {movie.originalTitle || movie.title}</S.MovieOriginalTitle>
-              {movie.slogan && (
-                <S.MovieTagline>{movie.slogan}</S.MovieTagline>
-              )}
             </S.TitleSection>
             
             <S.ActionButtons className="header-buttons">
