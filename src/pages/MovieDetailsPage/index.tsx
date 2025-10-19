@@ -113,6 +113,15 @@ const MovieDetailsPage: React.FC = () => {
               <S.MovieTitle>{movie.title}</S.MovieTitle>
               <S.MovieOriginalTitle>Título original: {movie.originalTitle || movie.title}</S.MovieOriginalTitle>
             </S.TitleSection>
+            
+            <S.ActionButtons className="header-buttons">
+              <Button variant="secondary" onClick={handleDeleteClick}>
+                Deletar
+              </Button>
+              <Button variant="primary" onClick={handleEditClick}>
+                Editar
+              </Button>
+            </S.ActionButtons>
           </S.MovieHeader>
           
           <S.MovieGrid>
@@ -124,7 +133,7 @@ const MovieDetailsPage: React.FC = () => {
                 />
               </S.MovieImageContainer>
               
-              <S.ActionButtons>
+              <S.ActionButtons className="image-buttons">
                 <Button variant="secondary" onClick={handleDeleteClick}>
                   Deletar
                 </Button>

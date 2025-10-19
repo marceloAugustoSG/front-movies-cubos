@@ -57,11 +57,10 @@ export const MovieContent = styled.div`
 `;
 
 export const MovieHeader = styled.div`
-  display: block;
-  
-  @media (max-width: 753px) {
-    display: none;
-  }
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 24px;
+  align-items: start;
 `;
 
 export const TitleSection = styled.div`
@@ -70,9 +69,7 @@ export const TitleSection = styled.div`
   gap: 8px;
   
   &.header-titles {
-    @media (max-width: 753px) {
-      display: none;
-    }
+    display: flex;
   }
   
   &.mobile-titles {
@@ -104,26 +101,37 @@ export const MobileInfoSection = styled.div`
 `;
 
 export const ActionButtons = styled.div`
-  display: none;
-  justify-content: center;
-  margin-top: 16px;
+  display: flex;
+  gap: 16px;
   
-  @media (max-width: 753px) {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+  &.header-buttons {
+    @media (max-width: 753px) {
+      display: none;
+    }
   }
   
-  @media (max-width: 414px) {
-    flex-direction: row;
-    gap: 8px;
+  &.image-buttons {
+    display: none;
+    justify-content: center;
+    margin-top: 16px;
     
-    button:first-child {
-      flex: 1;
+    @media (max-width: 753px) {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
     }
     
-    button:last-child {
-      flex: 2;
+    @media (max-width: 414px) {
+      flex-direction: row;
+      gap: 8px;
+      
+      button:first-child {
+        flex: 1;
+      }
+      
+      button:last-child {
+        flex: 2;
+      }
     }
   }
 `;
@@ -291,6 +299,8 @@ export const InfoRow = styled.div`
 export const ClassificationBlock = styled.div`
   width: 211px;
   height: 69px;
+  display: flex;
+  align-items: center;
   
   @media (max-width: 768px) {
     width: 100%;
@@ -309,10 +319,12 @@ export const VotesWithRating = styled.div`
   display: flex;
   align-items: center;
   gap: 12px;
+  height: 69px;
   
   @media (max-width: 768px) {
     justify-content: space-between;
     gap: 16px;
+    height: auto;
   }
   
   @media (max-width: 480px) {
