@@ -86,7 +86,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     login,
     register,
     logout,
-    isLoading: isLoading || !isInitialized
+    isLoading: isLoading || !isInitialized,
+    isInitialized
   };
 
   return (

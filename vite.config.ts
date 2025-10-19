@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
@@ -15,14 +16,11 @@ export default defineConfig(({ mode }) => {
           secure: false,
           ws: true,
           configure: (proxy, _options) => {
-            proxy.on('error', (err, _req, _res) => {
-              console.log('❌ Proxy error:', err.message);
+            proxy.on('error', (_err, _req, _res) => {
             });
-            proxy.on('proxyReq', (proxyReq, req, _res) => {
-              console.log('🔄 Sending Request:', req.method, req.url, '→', proxyReq.path);
+            proxy.on('proxyReq', (_proxyReq, _req, _res) => {
             });
-            proxy.on('proxyRes', (proxyRes, req, _res) => {
-              console.log('✅ Received Response:', proxyRes.statusCode, req.url);
+            proxy.on('proxyRes', (_proxyRes, _req, _res) => {
             });
           },
         }
@@ -32,6 +30,13 @@ export default defineConfig(({ mode }) => {
       outDir: 'dist',
       sourcemap: false,
       minify: 'terser',
+    },
+    test: {
+      globals: true,
+      environment: 'jsdom',
+      setupFiles: ['./src/test/setup.ts'],
+      css: true,
+      testTimeout: 10000,
     },
   }
 })

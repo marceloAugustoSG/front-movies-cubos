@@ -28,6 +28,7 @@ export interface AuthContextType {
   register: (credentials: RegisterRequest) => Promise<void>;
   logout: () => void;
   isLoading: boolean;
+  isInitialized: boolean;
 }
 
 export interface Movie {
