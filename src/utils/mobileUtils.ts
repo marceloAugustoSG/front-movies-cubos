@@ -24,8 +24,7 @@ export const isPrivateBrowsing = (): boolean => {
 
 export const checkNetworkConnectivity = async (): Promise<boolean> => {
   try {
-    // Tenta fazer uma requisição simples para verificar conectividade
-    const response = await fetch('https://www.google.com/favicon.ico', {
+    await fetch('https://www.google.com/favicon.ico', {
       method: 'HEAD',
       mode: 'no-cors',
       cache: 'no-cache'
