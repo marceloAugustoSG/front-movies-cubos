@@ -54,7 +54,13 @@ const LoginPage: React.FC = () => {
       await login(credentials);
       setLoginSuccess(true);
     } catch (err) {
-      setError('Erro ao fazer login. Verifique suas credenciais.');
+      const errorMessage = err instanceof Error ? err.message : 'Erro ao fazer login. Verifique suas credenciais.';
+      setError(errorMessage);
+      
+      // Log do erro para debug em desenvolvimento
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Erro no login:', err);
+      }
     }
   };
 
